@@ -1,13 +1,12 @@
 /*
  * COMPONENT: Solutions (the ONE dark moment on the page)
- * WHAT IT DOES: Bold dark section. Each flagship platform is a numbered
- *               row: 01 — Title — description. A thin 1px white line
- *               separates each row. Hover tints the row with a soft blue
- *               overlay and nudges its inner padding. A "Why choose us"
- *               4-column stats strip closes the section.
+ * WHAT IT DOES: Dark editorial section listing the 5 categorical
+ *               solutions as numbered rows. Each row hovers with a soft
+ *               blue tint and nudges its padding. A 4-up stats grid and
+ *               primary CTA close the section.
  * HOW TO TWEAK:
- *  • Rows & stats: edit `solutions` in src/constants/data.js
- *  • Hover effect: see `.solution-row` in src/index.css
+ *  • Rows, stats, CTA: edit `solutions` in src/constants/data.js
+ *  • Hover behaviour: see `.solution-row` in src/index.css
  */
 import { motion } from 'framer-motion'
 import { Link } from 'react-scroll'
@@ -32,9 +31,8 @@ export default function Solutions() {
   return (
     <section
       id="solutions"
-      className="relative py-24 md:py-36 bg-ink text-white scroll-mt-16 overflow-hidden"
+      className="relative py-24 md:py-36 bg-ink text-white scroll-mt-20 overflow-hidden"
     >
-      {/* faint dot grid + corner glow */}
       <div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none opacity-[0.10]"
@@ -47,13 +45,12 @@ export default function Solutions() {
       <div aria-hidden="true" className="absolute -bottom-24 -right-24 w-[380px] h-[380px] rounded-full bg-brand-accent/20 blur-[120px]" />
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Title */}
         <motion.div
           variants={titleVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.4 }}
-          className="mb-16 md:mb-24 max-w-3xl"
+          className="mb-16 md:mb-20 max-w-3xl"
         >
           <div className="text-eyebrow uppercase font-semibold text-white/55 mb-5">
             {solutions.eyebrow}
@@ -61,14 +58,16 @@ export default function Solutions() {
           <h2 className="font-display font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[0.95] tracking-tightest whitespace-pre-line">
             {solutions.title}
           </h2>
+          <p className="mt-6 max-w-2xl text-white/65 leading-relaxed font-light">
+            {solutions.intro}
+          </p>
         </motion.div>
 
-        {/* Numbered rows */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.15 }}
+          viewport={{ once: true, amount: 0.1 }}
           className="border-t border-white/10"
         >
           {solutions.rows.map((row) => (
@@ -125,6 +124,26 @@ export default function Solutions() {
               </div>
             </div>
           ))}
+        </motion.div>
+
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="mt-14 text-center"
+        >
+          <Link
+            to={solutions.cta.to}
+            smooth={true}
+            duration={500}
+            offset={NAV_OFFSET}
+            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-medium bg-white text-ink hover:bg-brand-accent hover:text-white transition-colors duration-300 cursor-pointer"
+          >
+            {solutions.cta.label}
+            <span aria-hidden="true">→</span>
+          </Link>
         </motion.div>
       </div>
     </section>

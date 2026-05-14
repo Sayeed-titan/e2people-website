@@ -1,17 +1,18 @@
 /*
  * COMPONENT: Navbar
- * WHAT IT DOES: Stays at the top of the page while you scroll.
- *               Frosted glass effect kicks in after the first 8px.
- *               Active section gets a center-out underline (see index.css).
+ * WHAT IT DOES: Sticky nav. Logo + tagline on the left, 7 section links
+ *               + primary CTA on the right. Becomes a frosted-glass
+ *               surface after the first 8px of scroll. Active section
+ *               gets a center-out underline (see index.css).
  * HOW TO TWEAK:
  *  • Change links: edit `navLinks` in src/constants/data.js
- *  • Change CTA label: edit the string below (look for 'Start a project')
+ *  • Change CTA: edit the string below (look for 'Get Started')
  *  • Change scroll offset: edit NAV_OFFSET in src/constants/data.js
  */
 import { useState, useEffect } from 'react'
 import { Link } from 'react-scroll'
 import { motion, AnimatePresence } from 'framer-motion'
-import { navLinks, NAV_OFFSET } from '../constants/data'
+import { navLinks, brand, NAV_OFFSET } from '../constants/data'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -36,7 +37,8 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-[72px]">
+          {/* Brand */}
           <Link
             to="hero"
             smooth={true}
@@ -46,9 +48,13 @@ export default function Navbar() {
             aria-label="Go to top"
           >
             <img src="/logo.png" alt="e2People" className="h-8 sm:h-9 w-auto" />
+            <span className="hidden lg:inline text-eyebrow uppercase text-ink/55 max-w-[18ch] leading-tight">
+              {brand.shortTagline}
+            </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-9">
+          {/* Desktop links */}
+          <div className="hidden md:flex items-center gap-x-7 xl:gap-x-9">
             {navLinks.map((item) => (
               <Link
                 key={item.to}
@@ -70,10 +76,11 @@ export default function Navbar() {
               offset={NAV_OFFSET}
               className="btn-primary px-5 py-2 rounded-full text-[0.86rem] font-medium cursor-pointer"
             >
-              Start a project
+              Get Started
             </Link>
           </div>
 
+          {/* Hamburger */}
           <button
             type="button"
             onClick={() => setIsOpen((v) => !v)}
@@ -92,6 +99,7 @@ export default function Navbar() {
           </button>
         </div>
 
+        {/* Mobile drawer */}
         <AnimatePresence initial={false}>
           {isOpen && (
             <motion.div
@@ -126,7 +134,7 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className="btn-primary mx-4 my-3 block text-center px-4 py-3 rounded-full text-sm font-medium cursor-pointer"
                 >
-                  Start a project
+                  Get Started
                 </Link>
               </div>
             </motion.div>

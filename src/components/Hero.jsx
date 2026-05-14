@@ -1,13 +1,13 @@
 /*
  * COMPONENT: Hero
- * WHAT IT DOES: Full-viewport opening section. Eyebrow at top,
- *               oversized headline (each word slides up in turn), light
- *               subtext, primary CTA + ghost CTA with arrow.
- *               An abstract concentric-rings SVG sits in the back-right.
+ * WHAT IT DOES: Full-viewport opening section. Eyebrow on top,
+ *               oversized 3-line headline (each word slides up on
+ *               stagger), light subtext, primary CTA + ghost CTA with
+ *               arrow. Abstract concentric rings SVG sits back-right.
  * HOW TO TWEAK:
- *  • Headline words & accent word: edit `hero.headline` in data.js
- *  • Subtext / CTAs: edit `hero` in data.js
- *  • Word stagger speed: change the 0.08 in `staggerChildren` below
+ *  • Edit copy and CTA labels: `hero` in src/constants/data.js
+ *  • Word stagger speed: change `staggerChildren` below
+ *  • Concentric rings opacity: tweak the `opacity-` class on <ConcentricRings/>
  */
 import { motion } from 'framer-motion'
 import { Link } from 'react-scroll'
@@ -60,7 +60,6 @@ export default function Hero() {
     >
       <ConcentricRings />
 
-      {/* Subtle bottom fade into the next section */}
       <div
         aria-hidden="true"
         className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-b from-transparent to-canvas pointer-events-none z-[1]"
@@ -73,7 +72,6 @@ export default function Hero() {
           animate="visible"
           className="max-w-4xl"
         >
-          {/* Eyebrow */}
           <motion.div variants={fadeVariants} className="mb-8 flex items-center gap-3">
             <span className="h-px w-10 bg-ink/40" />
             <span className="text-eyebrow uppercase font-semibold text-ink/70">
@@ -81,7 +79,6 @@ export default function Hero() {
             </span>
           </motion.div>
 
-          {/* Headline — word-stagger */}
           <h1 className="font-display font-extrabold text-display tracking-tightest text-ink">
             {hero.headline.map((line, idx) => (
               <span key={idx} className="block overflow-hidden">
@@ -95,7 +92,6 @@ export default function Hero() {
             ))}
           </h1>
 
-          {/* Subtext */}
           <motion.p
             variants={fadeVariants}
             className="mt-8 max-w-xl text-base sm:text-lg font-light leading-relaxed text-ink/65"
@@ -103,7 +99,6 @@ export default function Hero() {
             {hero.subtext}
           </motion.p>
 
-          {/* CTAs */}
           <motion.div variants={fadeVariants} className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
             <Link
               to={hero.primaryCta.to}
@@ -131,12 +126,11 @@ export default function Hero() {
             </Link>
           </motion.div>
 
-          {/* Tagline strip */}
           <motion.div
             variants={fadeVariants}
             className="mt-20 flex items-center gap-4 text-eyebrow uppercase text-ink/50"
           >
-            <span>{brand.tagline}</span>
+            <span>{brand.shortTagline}</span>
             <span className="h-px flex-1 bg-ink/15 max-w-[280px]" />
             <span>Dhaka · Bangladesh</span>
           </motion.div>

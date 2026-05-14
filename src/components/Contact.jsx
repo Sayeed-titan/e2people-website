@@ -1,20 +1,20 @@
 /*
  * COMPONENT: Contact
- * WHAT IT DOES: Warm, editorial closing section. Left column lists email,
- *               phone, and address with thin icons. Right column is a
- *               minimal form — bottom-border-only inputs, floating labels.
- *               The full-width submit button shows an arrow that nudges
+ * WHAT IT DOES: "Get in Touch." Left column lists email, phone, and
+ *               address with thin outline icons. Right column is a
+ *               minimal form — bottom-border-only inputs with floating
+ *               labels. The submit button shows an arrow that nudges
  *               right on hover and collapses to a ✓ on success.
  * HOW TO TWEAK:
  *  • Copy & contact details: edit `contact` in src/constants/data.js
- *  • Form styling: see `.field` and `.btn-primary` in src/index.css
- *  • Replace simulated submit with real API call in `handleSubmit`
+ *  • Form field styles: `.field` and `.btn-primary` in src/index.css
+ *  • Replace simulated submit with a real API call in `handleSubmit`
  */
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { contact } from '../constants/data'
 
-const initialForm = { name: '', email: '', phone: '', company: '', message: '' }
+const initialForm = { name: '', email: '', phone: '', message: '' }
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const fadeUp = {
@@ -78,7 +78,7 @@ export default function Contact() {
   }
 
   return (
-    <section id="contact" className="relative py-24 md:py-32 bg-canvas scroll-mt-16">
+    <section id="contact" className="relative py-24 md:py-32 bg-canvas scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
           {/* LEFT — title + contact details */}
@@ -143,20 +143,21 @@ export default function Contact() {
             className="lg:col-span-7"
           >
             <form onSubmit={handleSubmit} noValidate className="space-y-6">
+              <div className="field">
+                <input
+                  id="contact-name"
+                  type="text"
+                  name="name"
+                  autoComplete="name"
+                  placeholder=" "
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+                <label htmlFor="contact-name">Full name *</label>
+              </div>
+
               <div className="grid sm:grid-cols-2 gap-6">
-                <div className="field">
-                  <input
-                    id="contact-name"
-                    type="text"
-                    name="name"
-                    autoComplete="name"
-                    placeholder=" "
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                  />
-                  <label htmlFor="contact-name">Full name *</label>
-                </div>
                 <div className="field">
                   <input
                     id="contact-email"
@@ -170,9 +171,6 @@ export default function Contact() {
                   />
                   <label htmlFor="contact-email">Email *</label>
                 </div>
-              </div>
-
-              <div className="grid sm:grid-cols-2 gap-6">
                 <div className="field">
                   <input
                     id="contact-phone"
@@ -184,18 +182,6 @@ export default function Contact() {
                     onChange={handleChange}
                   />
                   <label htmlFor="contact-phone">Phone</label>
-                </div>
-                <div className="field">
-                  <input
-                    id="contact-company"
-                    type="text"
-                    name="company"
-                    autoComplete="organization"
-                    placeholder=" "
-                    value={formData.company}
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="contact-company">Company</label>
                 </div>
               </div>
 
@@ -230,7 +216,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={status === 'loading' || status === 'success'}
-                aria-label="Send message"
+                aria-label={contact.ctaLabel}
                 className="btn-primary relative w-full rounded-full px-7 py-4 text-sm font-medium tracking-wide inline-flex items-center justify-center gap-3 group"
               >
                 <AnimatePresence mode="wait">
@@ -270,7 +256,7 @@ export default function Contact() {
                       exit={{ opacity: 0 }}
                       className="inline-flex items-center gap-2"
                     >
-                      Send message
+                      {contact.ctaLabel}
                       <span aria-hidden="true" className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
                     </motion.span>
                   )}

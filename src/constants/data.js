@@ -2,137 +2,187 @@
  * SITE CONTENT — single source of truth
  *
  * WHAT THIS DOES:
- *  All copy, link labels, contact details, solutions, services, team,
- *  and partner data live in this file. Components import what they need
- *  and never hardcode strings.
+ *  All copy, link labels, contact details, services, solutions, portfolio,
+ *  blog, team, and partner data live in this file. Components import what
+ *  they need and never hardcode strings.
  *
  * HOW TO TWEAK:
  *  • Update text:           edit the relevant array below
  *  • Add a service:         push a new object into `services`
- *  • Add a team member:     push a new object into `team`
+ *  • Add a portfolio item:  push a new object into `portfolio`
+ *  • Add a blog post:       push a new object into `blog`
  *  • Update contact:        edit `contact`
  *  • Change footer links:   edit `footer.quickLinks` / `footer.legalLinks`
  *  • Change social handles: edit `footer.socialLinks` (href is the URL)
  */
 
-export const NAV_OFFSET = -64
+export const NAV_OFFSET = -72
 
 export const brand = {
   name: 'e2People',
   full: 'e2People Limited',
-  tagline: 'Smart Evolution',
-  promise: 'Empowering Your Business Through Digital Innovation',
+  tagline: 'Empowering Your Business Through Digital Innovation',
+  shortTagline: 'Smart Evolution',
   shortBlurb:
     "e2People Limited is a fast-growing tech-enabled service company delivering smart, scalable, and sustainable solutions to businesses and communities across Bangladesh.",
 }
 
 export const navLinks = [
-  { label: 'Home',      to: 'hero' },
-  { label: 'Services',  to: 'services' },
-  { label: 'About',     to: 'about' },
-  { label: 'Solutions', to: 'solutions' },
-  { label: 'Team',      to: 'team' },
-  { label: 'Contact',   to: 'contact' },
+  { label: 'Home',       to: 'hero' },
+  { label: 'About Us',   to: 'about' },
+  { label: 'Services',   to: 'services' },
+  { label: 'Solutions',  to: 'solutions' },
+  { label: 'Portfolio',  to: 'portfolio' },
+  { label: 'Blog',       to: 'blog' },
+  { label: 'Contact Us', to: 'contact' },
 ]
 
 export const hero = {
   eyebrow: 'Smart Evolution — Digital Partner',
   headline: [
-    { text: 'Empowering' },
-    { text: 'your business' },
-    { text: 'through digital' },
-    { text: 'innovation.', accent: true },
+    { text: 'Transforming' },
+    { text: 'businesses' },
+    { text: 'with tailored digital' },
+    { text: 'solutions.', accent: true },
   ],
   subtext:
-    "We design and deliver software that helps Bangladeshi businesses and public institutions run smarter — from cloud platforms to nationwide management systems.",
-  primaryCta: { label: 'Start a project', to: 'contact' },
-  secondaryCta: { label: 'Explore services', to: 'services' },
+    "At e2People Limited, we provide innovative, end-to-end software solutions, helping businesses optimize operations, engage customers, and achieve sustainable growth in a digital-first world.",
+  primaryCta:   { label: 'Get Started', to: 'contact' },
+  secondaryCta: { label: 'Learn More',  to: 'services' },
 }
 
+/* All 13 services from the official brief. `featured: true` promotes the
+ * card into the bento "large" tier. The icon key is matched in Services.jsx. */
 export const services = [
-  {
-    title: 'Enterprise Software',
-    description: 'Custom platforms tailored to streamline operations and unlock efficiency at scale.',
-    span: 'large',
-    icon: 'enterprise',
-  },
-  {
-    title: 'Digital Transformation',
-    description: 'End-to-end modernization of processes, systems, and customer experiences.',
-    span: 'large',
-    icon: 'transform',
-  },
-  {
-    title: 'Customer Engagement',
-    description: 'Tools that turn interactions into lasting relationships.',
-    span: 'small',
-    icon: 'engagement',
-  },
-  {
-    title: 'Data & Analytics',
-    description: 'Decisions backed by clear, actionable insight.',
-    span: 'small',
-    icon: 'analytics',
-  },
-  {
-    title: 'Secure Infrastructure',
-    description: 'Robust, hardened foundations for your business and your data.',
-    span: 'small',
-    icon: 'shield',
-  },
-  {
-    title: 'Cloud Solutions',
-    description: 'Flexible, reliable cloud architecture built to grow with you.',
-    span: 'small',
-    icon: 'cloud',
-  },
+  { title: 'Website Design & Development', icon: 'web',        featured: true,
+    description: 'Powerful, user-friendly websites that enhance your online presence and engage your audience.' },
+  { title: 'Mobile App Development',       icon: 'mobile',     featured: true,
+    description: 'Custom mobile apps that deliver seamless experiences, drive engagement, and support business growth.' },
+  { title: 'Creative Design',              icon: 'palette',
+    description: 'Creative, visually appealing graphics that resonate with your brand and communicate clearly.' },
+  { title: 'Enterprise Software (ERP)',    icon: 'enterprise',
+    description: 'All-in-one ERP that integrates every part of your organisation for greater efficiency.' },
+  { title: 'CRM Solutions',                icon: 'crm',
+    description: 'Scalable CRM tools that strengthen customer relationships and lift business performance.' },
+  { title: 'Data Migration Services',      icon: 'migrate',
+    description: 'Safely move business data to modern systems with no loss and minimal downtime.' },
+  { title: 'Platform Management Systems',  icon: 'platform',
+    description: 'Robust management systems that keep your digital infrastructure running smoothly.' },
+  { title: 'Video & Animation',            icon: 'video',
+    description: 'Compelling video and animation that captivates audiences and drives action.' },
+  { title: 'Motion Graphics',              icon: 'motion',
+    description: 'Dynamic motion graphics that bring your brand to life in striking, visual ways.' },
+  { title: 'Social Media Management',      icon: 'social',
+    description: 'Expert strategies that grow engagement and build lasting brand loyalty.' },
+  { title: 'Desktop Applications',         icon: 'desktop',
+    description: 'Reliable, offline-capable desktop apps tailored to your business needs.' },
+  { title: 'APIs & Integrations',          icon: 'api',
+    description: 'Custom APIs that connect systems and unify your business workflows.' },
+  { title: 'Database Design & Management', icon: 'database',
+    description: 'Secure, scalable databases that manage your business-critical information.' },
 ]
 
 export const about = {
   eyebrow: 'Who We Are',
-  title: 'Built for the\nlong game.',
+  title: 'Innovation\nthat means business.',
   paragraph:
-    "At e2People Limited, we empower businesses and communities through digital innovation. As a fast-growing, tech-enabled service provider, we deliver smart, scalable, and sustainable solutions to clients across various sectors in Bangladesh. Our mission is to lead impactful projects that create real change — both on the ground and in the digital space.",
-  mission: 'To lead impactful projects that create real change — on the ground and in the digital space.',
-  vision: 'To be the digital innovation partner of choice for businesses and public institutions across South Asia.',
+    "At e2People Limited, we specialize in delivering high-quality, customized software solutions that address the unique challenges businesses face in the digital age. We're passionate about helping organizations transform their operations and grow through innovative digital solutions. Our team brings expertise in web development, mobile apps, graphic design, ERP systems, and more — all focused on delivering tangible results for our clients.",
+  vision:
+    'To be the most trusted partner for businesses seeking innovative, reliable, and scalable digital solutions.',
+  mission:
+    'To empower businesses with tailored solutions that drive efficiency, customer engagement, and growth, while simplifying complex processes through technology.',
   values: [
-    { title: 'Innovation',         desc: 'Forward-thinking by default.' },
-    { title: 'Scalability',        desc: 'Designed to grow with you.' },
-    { title: 'Sustainability',     desc: 'Built to last, not to leak.' },
-    { title: 'Integrity',          desc: 'Honest work, every time.' },
-    { title: 'Customer-Centric',   desc: 'Your outcomes drive ours.' },
+    { title: 'Innovation',          desc: 'Forward-thinking by default.' },
+    { title: 'Integrity',           desc: 'Honest work, every time.' },
+    { title: 'Collaboration',       desc: 'Better together — always.' },
+    { title: 'Excellence',          desc: 'Craft over shortcuts.' },
+    { title: 'Customer-Centricity', desc: 'Your outcomes drive ours.' },
   ],
+  cta: { label: 'Meet Our Team', to: 'team' },
 }
 
 export const solutions = {
-  eyebrow: 'Flagship Platforms',
-  title: 'Solutions in production,\nserving Bangladesh.',
+  eyebrow: 'Comprehensive Solutions',
+  title: 'Solutions for every\nbusiness need.',
+  intro:
+    'End-to-end digital solutions for organisations of every size. From your first website to a fully integrated ERP — we have the expertise to deliver.',
   rows: [
     {
       number: '01',
-      title: 'Visitor Management System (VMS)',
+      title: 'Custom Web Solutions',
       description:
-        "A cloud platform built for the Department of Prisons, Bangladesh. Secure online visit booking with NID & OTP verification, slot-based scheduling, payment integration, digital pass generation, and real-time admin monitoring.",
+        'Custom websites designed around your business goals — built to make you stand out in a crowded digital world.',
     },
     {
       number: '02',
-      title: 'PEPMIS',
+      title: 'Mobile App Development',
       description:
-        "Primary Education Property Management Information System for the Ministry of Primary and Mass Education, delivered through the DPE in partnership with LGED and DPHE — coordinating property data for primary schools nationwide.",
+        'Mobile apps that deliver seamless user experiences, drive customer engagement, and support business growth.',
     },
     {
       number: '03',
-      title: 'Textile ERP',
+      title: 'ERP Solutions',
       description:
-        "Enterprise Resource Planning for Bangladesh's textile and RMG sector — modular by design, covering HR, supply chain, financials, and stakeholder workflows across the industry.",
+        'Streamline your entire organization with enterprise resource planning — integrating finance, HR, inventory, and more into one platform.',
+    },
+    {
+      number: '04',
+      title: 'CRM Systems',
+      description:
+        'Strengthen customer relationships and lift performance by centralising customer data and improving service delivery.',
+    },
+    {
+      number: '05',
+      title: 'API & Integration Solutions',
+      description:
+        'Connect existing systems and applications into a unified ecosystem — improving efficiency and streamlining workflows.',
     },
   ],
   stats: [
-    { value: '03', label: 'Flagship platforms in production' },
-    { value: '35+', label: 'Years of leadership experience' },
-    { value: '05', label: 'Strategic partners' },
-    { value: 'BD', label: 'Designed and built in Bangladesh' },
+    { value: '13',  label: 'Service capabilities' },
+    { value: '35+', label: 'Years of leadership' },
+    { value: '05',  label: 'Strategic partners' },
+    { value: 'BD',  label: 'Built in Bangladesh' },
   ],
+  cta: { label: 'Learn More About Our Solutions', to: 'contact' },
+}
+
+/* Real flagship work, surfaced as the brief's "Project 1/2/3" portfolio. */
+export const portfolio = {
+  eyebrow: 'Selected Work',
+  title: 'Our work\nspeaks for itself.',
+  intro:
+    "Over the years, we've helped businesses and public institutions achieve digital transformation through our solutions. A few recent projects:",
+  items: [
+    {
+      label: 'Project 01',
+      client: 'Department of Prisons, Bangladesh',
+      title: 'Visitor Management System (VMS)',
+      description:
+        "A cloud platform enabling secure online booking of prison visits with NID & OTP verification, slot-based scheduling, payment integration, digital pass generation, and real-time admin monitoring.",
+      tags: ['Cloud Platform', 'Govt. Tech', 'Payments'],
+      image: '/products/Visitior Management System (2).jpg',
+    },
+    {
+      label: 'Project 02',
+      client: 'Ministry of Primary & Mass Education',
+      title: 'PEPMIS',
+      description:
+        'Primary Education Property Management Information System — coordinating property data for primary schools nationwide, delivered through the DPE in partnership with LGED and DPHE.',
+      tags: ['Information System', 'Govt. Tech', 'Education'],
+      image: '/products/pepmis_dashboard.png',
+    },
+    {
+      label: 'Project 03',
+      client: "Bangladesh's RMG sector",
+      title: 'Textile ERP',
+      description:
+        "Modular Enterprise Resource Planning for the textile and ready-made-garment industry — covering HR, supply chain, financials, and stakeholder workflows.",
+      tags: ['ERP', 'RMG', 'Workflow'],
+      image: '/products/textile__erp_dashboard.png',
+    },
+  ],
+  cta: { label: 'Discuss a Project', to: 'contact' },
 }
 
 export const partners = [
@@ -164,43 +214,82 @@ export const team = [
   },
 ]
 
+export const blog = {
+  eyebrow: 'Insights & Resources',
+  title: 'From the journal.',
+  intro:
+    "Industry trends, tips, and best practices from e2People Limited — covering digital transformation and innovative software solutions.",
+  articles: [
+    {
+      number: '01',
+      category: 'Enterprise Systems',
+      title: 'Why Every Business Needs a Custom ERP System',
+      excerpt:
+        "ERP systems are no longer optional for businesses that want to scale and optimise operations. Here's why custom matters.",
+      readTime: '6 min read',
+      tone: 'from-brand-700 to-brand-400',
+    },
+    {
+      number: '02',
+      category: 'Mobile',
+      title: 'Mobile Apps: The Future of Customer Engagement',
+      excerpt:
+        'How mobile apps are transforming customer experiences and driving business success — and what to design for.',
+      readTime: '5 min read',
+      tone: 'from-emerald-700 to-emerald-400',
+    },
+    {
+      number: '03',
+      category: 'Web',
+      title: 'How to Build a Successful Website',
+      excerpt:
+        'Key considerations for creating a website that aligns with your business objectives and engages your audience.',
+      readTime: '7 min read',
+      tone: 'from-violet-700 to-violet-400',
+    },
+  ],
+  cta: { label: 'Read Our Blog', to: 'contact' },
+}
+
 export const contact = {
   eyebrow: "Let's talk",
-  title: "Let's build\nsomething.",
+  title: "Get in\ntouch.",
   subtext:
-    "Tell us what you're working on. We respond to inquiries within one business day.",
-  email:   'contact@e2people.com',
+    "We'd love to hear about your project. Whether you're ready to start a new digital solution or simply need advice, we are here to help. Reach out and let's start building your digital future.",
+  email:   'info@e2people.com',
   phone:   { display: '+880 1713 335334', tel: '+8801713335334' },
   address: '3rd Floor, House 147, Road 1 (East), Baridhara DOHS, Dhaka, Bangladesh',
+  ctaLabel: 'Submit',
 }
 
 export const footer = {
-  tagline: 'Smart Evolution — Digital innovation for Bangladesh.',
-  madeWith: 'Made with care in Dhaka.',
+  tagline: 'Empowering Your Business Through Digital Innovation.',
+  madeWith: 'Made with care by e2People.',
   quickLinks: [
-    { label: 'Home',      to: 'hero' },
-    { label: 'Services',  to: 'services' },
-    { label: 'About',     to: 'about' },
-    { label: 'Solutions', to: 'solutions' },
-    { label: 'Team',      to: 'team' },
-    { label: 'Contact',   to: 'contact' },
+    { label: 'Home',       to: 'hero' },
+    { label: 'About Us',   to: 'about' },
+    { label: 'Services',   to: 'services' },
+    { label: 'Solutions',  to: 'solutions' },
+    { label: 'Portfolio',  to: 'portfolio' },
+    { label: 'Blog',       to: 'blog' },
+    { label: 'Contact Us', to: 'contact' },
   ],
   serviceLinks: [
-    { label: 'Enterprise Software',   to: 'services' },
-    { label: 'Digital Transformation', to: 'services' },
-    { label: 'Cloud Solutions',       to: 'services' },
-    { label: 'Data & Analytics',      to: 'services' },
-    { label: 'Secure Infrastructure', to: 'services' },
+    { label: 'Web Design & Development', to: 'services' },
+    { label: 'Mobile App Development',   to: 'services' },
+    { label: 'Enterprise Software (ERP)', to: 'services' },
+    { label: 'CRM Solutions',             to: 'services' },
+    { label: 'APIs & Integrations',       to: 'services' },
   ],
   legalLinks: [
-    { label: 'Privacy Policy',    href: '#' },
-    { label: 'Terms of Service',  href: '#' },
-    { label: 'Cookie Policy',     href: '#' },
+    { label: 'Privacy Policy',     href: '#' },
+    { label: 'Terms & Conditions', href: '#' },
+    { label: 'Cookie Policy',      href: '#' },
   ],
   socialLinks: [
-    { label: 'LinkedIn', href: '#', icon: 'linkedin' },
-    { label: 'Facebook', href: '#', icon: 'facebook' },
-    { label: 'Twitter',  href: '#', icon: 'twitter' },
-    { label: 'GitHub',   href: '#', icon: 'github' },
+    { label: 'Facebook',  href: '#', icon: 'facebook' },
+    { label: 'LinkedIn',  href: '#', icon: 'linkedin' },
+    { label: 'Twitter',   href: '#', icon: 'twitter' },
+    { label: 'Instagram', href: '#', icon: 'instagram' },
   ],
 }

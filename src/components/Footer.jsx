@@ -1,9 +1,9 @@
 /*
  * COMPONENT: Footer
- * WHAT IT DOES: Refined dark footer. Brand block (logo + tagline) at left,
- *               three link columns (Quick Links, Services, Legal), bottom
- *               bar with copyright and "Made with care.". Social icons
- *               are minimal outline SVGs with a subtle scale on hover.
+ * WHAT IT DOES: Refined dark footer. Brand block (logo + tagline + socials)
+ *               at left, three link columns (Quick Links, Services, Legal),
+ *               plus a Get In Touch column. Bottom bar with copyright and
+ *               "Made with care by e2People."
  * HOW TO TWEAK:
  *  • Link lists / social URLs: edit `footer` in src/constants/data.js
  *  • Tagline / "Made with care": edit `footer.tagline` and `footer.madeWith`
@@ -13,15 +13,15 @@ import { Link } from 'react-scroll'
 import { footer, brand, contact, NAV_OFFSET } from '../constants/data'
 
 const Icons = {
+  facebook: (p) => (
+    <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 4h-2a4 4 0 0 0-4 4v2H8v4h2v8h4v-8h2.5l.5-4H14V8a1 1 0 0 1 1-1h2V4z" />
+    </svg>
+  ),
   linkedin: (p) => (
     <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="3" width="18" height="18" rx="3" />
       <path d="M8 10v7M8 7.2v.1M12 17v-4.5a2.5 2.5 0 0 1 5 0V17M12 17v-7" />
-    </svg>
-  ),
-  facebook: (p) => (
-    <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M16 4h-2a4 4 0 0 0-4 4v2H8v4h2v8h4v-8h2.5l.5-4H14V8a1 1 0 0 1 1-1h2V4z" />
     </svg>
   ),
   twitter: (p) => (
@@ -29,9 +29,11 @@ const Icons = {
       <path d="M4 4l7.5 9.5L4.5 20H7l5.6-6 4.4 6H21l-7.8-10.4L20 4h-2.4l-4.6 5.1L9 4H4z" />
     </svg>
   ),
-  github: (p) => (
+  instagram: (p) => (
     <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 19c-4 1.5-4-2-6-2m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 4 5.4 4.3 5.4 4.3a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 10.7c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V22" />
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" />
     </svg>
   ),
 }
@@ -41,7 +43,6 @@ export default function Footer() {
 
   return (
     <footer className="relative bg-ink text-white">
-      {/* faint dot grid */}
       <div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none opacity-[0.07]"
@@ -65,7 +66,7 @@ export default function Footer() {
             <img
               src="/logo.png"
               alt={brand.full}
-              className="h-12 w-auto bg-white/95 rounded-md p-2"
+              className="h-12 w-auto brightness-0 invert"
             />
             <p className="mt-6 text-white/70 leading-relaxed text-sm max-w-sm font-light">
               {footer.tagline}
@@ -76,7 +77,7 @@ export default function Footer() {
                 const Icon = Icons[s.icon]
                 return (
                   <motion.a
-                    key={s.icon}
+                    key={`social-${s.icon}`}
                     href={s.href}
                     aria-label={s.label}
                     whileHover={{ scale: 1.15 }}
@@ -92,7 +93,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div className="lg:col-span-2">
-            <div className="text-eyebrow uppercase font-semibold text-white/55 mb-5">Quick links</div>
+            <div className="text-eyebrow uppercase font-semibold text-white/55 mb-5">Quick Links</div>
             <ul className="space-y-3">
               {footer.quickLinks.map((l) => (
                 <li key={`quick-${l.to}`}>
@@ -130,9 +131,9 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Legal + contact preview */}
+          {/* Get In Touch + Legal */}
           <div className="lg:col-span-3">
-            <div className="text-eyebrow uppercase font-semibold text-white/55 mb-5">Get in touch</div>
+            <div className="text-eyebrow uppercase font-semibold text-white/55 mb-5">Get In Touch</div>
             <ul className="space-y-3 text-sm">
               <li>
                 <a href={`mailto:${contact.email}`} className="text-white/80 hover:text-white transition-colors break-words">

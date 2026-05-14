@@ -1,32 +1,56 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-scroll'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 
-// Sticky navigation bar with smooth scroll links and mobile hamburger menu
+// Sticky navigation bar with smooth-scroll links, active-section spy, and a mobile hamburger menu.
+// The `offset` matches the navbar height (h-16 = 64px) so scrolled-to sections aren't hidden underneath.
+const NAV_OFFSET = -64
+
+const navItems = [
+  { label: 'Home', to: 'hero' },
+  { label: 'About', to: 'about' },
+  { label: 'Services', to: 'services' },
+  { label: 'Products', to: 'products' },
+  { label: 'Team', to: 'team' },
+  { label: 'Contact', to: 'contact' },
+]
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
 
-  const navItems = [
-    { label: 'Home', to: 'hero' },
-    { label: 'About', to: 'about' },
-    { label: 'Services', to: 'services' },
-    { label: 'Products', to: 'products' },
-    { label: 'Team', to: 'team' },
-    { label: 'Contact', to: 'contact' },
-  ]
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  const linkBase =
+    'nav-link relative text-gray-700 hover:text-brand-700 cursor-pointer text-sm font-medium transition-colors duration-300 py-1'
+  const linkActive = 'nav-link-active text-brand-700'
 
   return (
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className="fixed top-0 w-full bg-white shadow-lg z-50"
+      className={`fixed top-0 w-full z-50 transition-shadow duration-300 ${
+        scrolled ? 'bg-white/95 backdrop-blur shadow-md' : 'bg-white shadow-sm'
+      }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="hero" smooth={true} duration={500} className="cursor-pointer">
-            <img src="/logo.png" alt="e2People" className="h-10 w-auto" />
+          <Link
+            to="hero"
+            smooth={true}
+            duration={500}
+            offset={NAV_OFFSET}
+            className="cursor-pointer flex items-center"
+            aria-label="Go to top"
+          >
+            <img src="/logo.png" alt="e2People — Smart Evolution" className="h-9 sm:h-10 w-auto" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -35,9 +59,12 @@ export default function Navbar() {
               <Link
                 key={item.to}
                 to={item.to}
+                spy={true}
                 smooth={true}
                 duration={500}
-                className="text-gray-700 hover:text-blue-600 cursor-pointer text-sm font-medium transition-colors"
+                offset={NAV_OFFSET}
+                activeClass={linkActive}
+                className={linkBase}
               >
                 {item.label}
               </Link>
@@ -46,7 +73,8 @@ export default function Navbar() {
               to="contact"
               smooth={true}
               duration={500}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors cursor-pointer"
+              offset={NAV_OFFSET}
+              className="bg-brand-700 text-white px-5 py-2 rounded-lg font-medium hover:bg-brand-800 transition-colors duration-300 cursor-pointer shadow-soft"
             >
               Get Started
             </Link>
@@ -54,11 +82,13 @@ export default function Navbar() {
 
           {/* Mobile hamburger button */}
           <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden focus:outline-none"
+            onClick={() => setIsOpen((v) => !v)}
+            className="md:hidden p-2 -mr-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+            aria-label={isOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isOpen}
           >
             <svg
-              className="w-6 h-6"
+              className="w-6 h-6 text-gray-800"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -74,36 +104,46 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Navigation Menu */}
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden pb-4 border-t border-gray-200"
-          >
-            {navItems.map((item) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                smooth={true}
-                duration={500}
-                onClick={() => setIsOpen(false)}
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer text-sm"
-              >
-                {item.label}
-              </Link>
-            ))}
-            <Link
-              to="contact"
-              smooth={true}
-              duration={500}
-              onClick={() => setIsOpen(false)}
-              className="block mx-4 mt-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium text-center cursor-pointer"
+        <AnimatePresence initial={false}>
+          {isOpen && (
+            <motion.div
+              key="mobile-menu"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25 }}
+              className="md:hidden overflow-hidden border-t border-gray-100"
             >
-              Get Started
-            </Link>
-          </motion.div>
-        )}
+              <div className="py-2">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    spy={true}
+                    smooth={true}
+                    duration={500}
+                    offset={NAV_OFFSET}
+                    activeClass="text-brand-700 bg-brand-50"
+                    onClick={() => setIsOpen(false)}
+                    className="block px-4 py-3 text-gray-700 hover:bg-gray-50 cursor-pointer text-sm font-medium transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+                <Link
+                  to="contact"
+                  smooth={true}
+                  duration={500}
+                  offset={NAV_OFFSET}
+                  onClick={() => setIsOpen(false)}
+                  className="block mx-4 my-3 bg-brand-700 text-white px-4 py-2.5 rounded-lg font-medium text-center cursor-pointer hover:bg-brand-800 transition-colors duration-300"
+                >
+                  Get Started
+                </Link>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.nav>
   )

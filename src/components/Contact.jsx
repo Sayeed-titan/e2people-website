@@ -1,95 +1,79 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 
-// Contact section with form and location info
+// Contact section — validated form with loading/success/error feedback, plus company contact info.
+// Phone display and tel: link are kept in sync to avoid mis-dials.
+const PHONE_DISPLAY = '+880 1713 335334'
+const PHONE_TEL = '+8801713335334'
+const EMAIL = 'contact@e2people.com'
+const ADDRESS = '3rd Floor, House 147, Road 1 (East), Baridhara DOHS, Dhaka, Bangladesh'
+
+const initialForm = { name: '', email: '', phone: '', company: '', message: '' }
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+}
+
 export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    company: '',
-    message: '',
-  })
+  const [formData, setFormData] = useState(initialForm)
   const [isLoading, setIsLoading] = useState(false)
-  const [submitMessage, setSubmitMessage] = useState('')
+  const [feedback, setFeedback] = useState(null) // { type: 'success' | 'error', text: string }
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
+    setFormData((prev) => ({ ...prev, [name]: value }))
+    if (feedback) setFeedback(null)
+  }
+
+  const showFeedback = (next, autoClearMs = 5000) => {
+    setFeedback(next)
+    if (autoClearMs) {
+      window.setTimeout(() => {
+        setFeedback((current) => (current === next ? null : current))
+      }, autoClearMs)
+    }
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    // Basic validation
-    if (!formData.name || !formData.email || !formData.message) {
-      setSubmitMessage('Please fill in all required fields.')
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+      showFeedback({ type: 'error', text: 'Please fill in all required fields.' })
       return
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(formData.email)) {
-      setSubmitMessage('Please enter a valid email address.')
+    if (!emailRegex.test(formData.email.trim())) {
+      showFeedback({ type: 'error', text: 'Please enter a valid email address.' })
       return
     }
 
-    // Simulate form submission
     setIsLoading(true)
-    setTimeout(() => {
-      setSubmitMessage('Thank you! We will get back to you shortly.')
-      setFormData({ name: '', email: '', phone: '', company: '', message: '' })
+    // Simulated submission — wire to a real endpoint when backend is available.
+    window.setTimeout(() => {
       setIsLoading(false)
-      // Clear message after 5 seconds
-      setTimeout(() => setSubmitMessage(''), 5000)
-    }, 1500)
+      setFormData(initialForm)
+      showFeedback({ type: 'success', text: 'Thank you! We will get back to you shortly.' })
+    }, 1200)
   }
 
   const contactInfo = [
-    {
-      icon: '📧',
-      label: 'Email',
-      value: 'contact@e2people.com',
-      link: 'mailto:contact@e2people.com',
-    },
-    {
-      icon: '📱',
-      label: 'Phone',
-      value: '+880 1713 335334',
-      link: 'tel:+880173335334',
-    },
-    {
-      icon: '📍',
-      label: 'Office',
-      value: 'Floor 3rd, House 147, Road 1 (East), Baridhara DOHS, Dhaka, Bangladesh',
-      link: null,
-    },
+    { icon: '📧', label: 'Email',  value: EMAIL,         link: `mailto:${EMAIL}` },
+    { icon: '📱', label: 'Phone',  value: PHONE_DISPLAY, link: `tel:${PHONE_TEL}` },
+    { icon: '📍', label: 'Office', value: ADDRESS,       link: null },
   ]
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6 },
-    },
-  }
+  const fieldClass =
+    'w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100 transition-colors'
 
   return (
-    <section id="contact" className="py-20 bg-white">
+    <section id="contact" className="py-20 bg-white scroll-mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <motion.div
@@ -97,15 +81,15 @@ export default function Contact() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-14"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Get In Touch
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
             Ready to transform your business? Contact us today to discuss your project needs.
           </p>
-          <div className="w-20 h-1 bg-gradient-to-r from-blue-600 to-blue-400 mx-auto mt-4"></div>
+          <div className="w-20 h-1 bg-gradient-to-r from-brand-700 to-brand-400 mx-auto mt-5 rounded-full" />
         </motion.div>
 
         {/* Contact content */}
@@ -113,139 +97,153 @@ export default function Contact() {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
-          className="grid md:grid-cols-2 gap-12"
+          viewport={{ once: true, amount: 0.15 }}
+          className="grid md:grid-cols-2 gap-10 lg:gap-14"
         >
           {/* Contact form */}
           <motion.div variants={itemVariants}>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Name field */}
+            <form onSubmit={handleSubmit} noValidate className="space-y-5">
               <div>
-                <label className="block text-gray-900 font-semibold mb-2">
-                  Full Name *
+                <label htmlFor="contact-name" className="block text-gray-900 font-semibold mb-2">
+                  Full Name <span className="text-brand-700">*</span>
                 </label>
                 <input
+                  id="contact-name"
                   type="text"
                   name="name"
+                  autoComplete="name"
+                  required
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 transition-colors"
+                  className={fieldClass}
                   placeholder="Your name"
                 />
               </div>
 
-              {/* Email field */}
               <div>
-                <label className="block text-gray-900 font-semibold mb-2">
-                  Email Address *
+                <label htmlFor="contact-email" className="block text-gray-900 font-semibold mb-2">
+                  Email Address <span className="text-brand-700">*</span>
                 </label>
                 <input
+                  id="contact-email"
                   type="email"
                   name="email"
+                  autoComplete="email"
+                  required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 transition-colors"
+                  className={fieldClass}
                   placeholder="your@email.com"
                 />
               </div>
 
-              {/* Phone field */}
               <div>
-                <label className="block text-gray-900 font-semibold mb-2">
+                <label htmlFor="contact-phone" className="block text-gray-900 font-semibold mb-2">
                   Phone Number
                 </label>
                 <input
+                  id="contact-phone"
                   type="tel"
                   name="phone"
+                  autoComplete="tel"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 transition-colors"
+                  className={fieldClass}
                   placeholder="+880 1234 567890"
                 />
               </div>
 
-              {/* Company field */}
               <div>
-                <label className="block text-gray-900 font-semibold mb-2">
+                <label htmlFor="contact-company" className="block text-gray-900 font-semibold mb-2">
                   Company
                 </label>
                 <input
+                  id="contact-company"
                   type="text"
                   name="company"
+                  autoComplete="organization"
                   value={formData.company}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 transition-colors"
+                  className={fieldClass}
                   placeholder="Your company"
                 />
               </div>
 
-              {/* Message field */}
               <div>
-                <label className="block text-gray-900 font-semibold mb-2">
-                  Message *
+                <label htmlFor="contact-message" className="block text-gray-900 font-semibold mb-2">
+                  Message <span className="text-brand-700">*</span>
                 </label>
                 <textarea
+                  id="contact-message"
                   name="message"
+                  rows="5"
+                  required
                   value={formData.message}
                   onChange={handleChange}
-                  rows="5"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 transition-colors resize-none"
+                  className={`${fieldClass} resize-none`}
                   placeholder="Tell us about your project..."
-                ></textarea>
+                />
               </div>
 
-              {/* Status message */}
-              {submitMessage && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`p-4 rounded-lg ${
-                    submitMessage.includes('Thank you')
-                      ? 'bg-green-50 text-green-700 border border-green-200'
-                      : 'bg-blue-50 text-blue-700 border border-blue-200'
-                  }`}
-                >
-                  {submitMessage}
-                </motion.div>
-              )}
+              {/* Feedback message */}
+              <AnimatePresence>
+                {feedback && (
+                  <motion.div
+                    key={feedback.text}
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.2 }}
+                    role={feedback.type === 'error' ? 'alert' : 'status'}
+                    aria-live="polite"
+                    className={`p-4 rounded-lg border ${
+                      feedback.type === 'success'
+                        ? 'bg-green-50 text-green-700 border-green-200'
+                        : 'bg-red-50 text-red-700 border-red-200'
+                    }`}
+                  >
+                    {feedback.text}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-              {/* Submit button */}
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full py-3 rounded-lg font-semibold text-white transition-all ${
+                className={`w-full py-3.5 rounded-lg font-semibold text-white transition-all duration-300 shadow-soft ${
                   isLoading
                     ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700'
+                    : 'bg-brand-700 hover:bg-brand-800'
                 }`}
               >
-                {isLoading ? 'Sending...' : 'Send Message'}
+                {isLoading ? (
+                  <span className="inline-flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                    </svg>
+                    Sending…
+                  </span>
+                ) : (
+                  'Send Message'
+                )}
               </button>
             </form>
           </motion.div>
 
           {/* Contact information */}
-          <motion.div variants={itemVariants} className="space-y-8">
-            {contactInfo.map((info, idx) => (
-              <motion.div
-                key={idx}
-                variants={itemVariants}
-                className="flex gap-4"
-              >
-                <div className="text-4xl">{info.icon}</div>
+          <motion.div variants={itemVariants} className="space-y-7">
+            {contactInfo.map((info) => (
+              <motion.div key={info.label} variants={itemVariants} className="flex gap-4">
+                <div className="text-3xl sm:text-4xl shrink-0" aria-hidden="true">{info.icon}</div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">
-                    {info.label}
-                  </h3>
+                  <h3 className="font-semibold text-gray-900 mb-1">{info.label}</h3>
                   {info.link ? (
-                    <a
-                      href={info.link}
-                      className="text-blue-600 hover:underline"
-                    >
+                    <a href={info.link} className="text-brand-700 hover:text-brand-800 hover:underline transition-colors break-words">
                       {info.value}
                     </a>
                   ) : (
-                    <p className="text-gray-600">{info.value}</p>
+                    <p className="text-gray-600 leading-relaxed">{info.value}</p>
                   )}
                 </div>
               </motion.div>
@@ -254,12 +252,10 @@ export default function Contact() {
             {/* Response time message */}
             <motion.div
               variants={itemVariants}
-              className="bg-blue-50 p-6 rounded-lg border border-blue-200 mt-8"
+              className="bg-brand-50 p-6 rounded-xl border border-brand-100/60 mt-4"
             >
-              <h4 className="font-semibold text-gray-900 mb-2">
-                Quick Response
-              </h4>
-              <p className="text-gray-600 text-sm">
+              <h4 className="font-semibold text-gray-900 mb-2">Quick Response</h4>
+              <p className="text-gray-600 text-sm leading-relaxed">
                 We typically respond to inquiries within 24 business hours. Our team is ready to discuss your project and provide tailored solutions.
               </p>
             </motion.div>

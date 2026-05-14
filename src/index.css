@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * GLOBAL STYLES — base typography, grain texture, and shared utilities.
+ *
+ * HOW TO TWEAK:
+ *  • Grain intensity:  .grain ::before { opacity: ... }
+ *  • Dot grid spacing: see tailwind.config.js > bg-dot-grid
+ *  • Smooth scroll behaviour respects prefers-reduced-motion
+ */
+
 * {
   margin: 0;
   padding: 0;
@@ -14,11 +23,12 @@ html {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #ffffff;
-  color: #1a1a1a;
+  background-color: #FAFAFA;
+  color: #0F1020;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  font-feature-settings: 'ss01' 1, 'cv11' 1;
 }
 
 img {
@@ -27,23 +37,186 @@ img {
 }
 
 ::selection {
-  background-color: #3437a3;
+  background-color: #3D3A8C;
   color: #ffffff;
 }
 
-/* Active section indicator under desktop nav links */
-.nav-link-active::after {
+/* ---------- Grain overlay (SVG turbulence noise as data URI) ---------- */
+.grain {
+  position: relative;
+  isolation: isolate;
+}
+.grain::before {
   content: '';
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -6px;
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(to right, #3437a3, #5158e0);
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.55;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.06 0 0 0 0 0.06 0 0 0 0 0.13 0 0 0 0.12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
 }
 
-/* Respect users who prefer reduced motion */
+/* ---------- Nav underline that grows from center on active ---------- */
+.nav-link { position: relative; padding-block: 0.25rem; }
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  height: 2px;
+  width: 70%;
+  border-radius: 2px;
+  background: linear-gradient(to right, #3D3A8C, #8B89D9);
+  transform: translateX(-50%) scaleX(0);
+  transform-origin: center;
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.nav-link-active::after,
+.nav-link:hover::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* ---------- Animated underline on inline text links ---------- */
+.text-link {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size 300ms ease;
+}
+.text-link:hover {
+  background-size: 100% 1px;
+}
+
+/* ---------- Button: brand "fill from left" hover ---------- */
+.btn-primary {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: #3D3A8C;
+  color: #ffffff;
+  transition: color 300ms ease, transform 300ms ease;
+}
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: #0F1020;
+  transform: translateX(-101%);
+  transition: transform 360ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+.btn-primary:hover::after {
+  transform: translateX(0);
+}
+.btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* ---------- Floating-label form fields (editorial style) ---------- */
+.field {
+  position: relative;
+  padding-top: 1.5rem;
+}
+.field input,
+.field textarea {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid #D5D5DA;
+  background: transparent;
+  padding: 0.5rem 0;
+  font-size: 1rem;
+  color: #0F1020;
+  outline: none;
+  transition: border-color 240ms ease;
+}
+.field textarea {
+  resize: vertical;
+  min-height: 7rem;
+  line-height: 1.55;
+}
+.field input::placeholder,
+.field textarea::placeholder {
+  color: transparent;
+}
+.field label {
+  position: absolute;
+  top: 1.55rem;
+  left: 0;
+  color: #6B6B73;
+  font-size: 1rem;
+  pointer-events: none;
+  transition: transform 240ms ease, font-size 240ms ease, color 240ms ease;
+  transform-origin: left top;
+}
+.field input:focus,
+.field textarea:focus {
+  border-bottom-color: #3D3A8C;
+}
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label,
+.field textarea:focus + label,
+.field textarea:not(:placeholder-shown) + label {
+  transform: translateY(-1.55rem) scale(0.78);
+  color: #3D3A8C;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* ---------- Solutions: numbered row hover overlay ---------- */
+.solution-row {
+  position: relative;
+  isolation: isolate;
+  transition: padding-inline 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.solution-row::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(139, 137, 217, 0.10), rgba(61, 58, 140, 0.02));
+  opacity: 0;
+  transition: opacity 360ms ease;
+  z-index: -1;
+}
+.solution-row:hover::before { opacity: 1; }
+.solution-row:hover { padding-inline: 1rem; }
+
+/* ---------- About: value row blue-accent slide-in ---------- */
+.value-row {
+  position: relative;
+  transition: padding-left 280ms ease, color 280ms ease;
+}
+.value-row::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%) scaleX(1);
+  transform-origin: left center;
+  width: 1.25rem; height: 2px;
+  background: #8B89D9;
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.value-row:hover { padding-left: 2rem; color: #ffffff; }
+.value-row:hover::before { transform: translateY(-50%) scaleX(1); }
+
+/* ---------- Reveal-on-scroll utility (used with useScrollReveal) ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-from-left { transform: translateX(-36px); }
+.reveal-from-right { transform: translateX(36px); }
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Respect users who prefer reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -53,4 +226,5 @@ img {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  .reveal { opacity: 1 !important; transform: none !important; }
 }

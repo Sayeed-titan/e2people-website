@@ -10,7 +10,7 @@ const navItems = [
   { label: 'Home', to: 'hero' },
   { label: 'About', to: 'about' },
   { label: 'Services', to: 'services' },
-  { label: 'Products', to: 'products' },
+  { label: 'Solutions', to: 'solutions' },
   { label: 'Team', to: 'team' },
   { label: 'Contact', to: 'contact' },
 ]
@@ -35,8 +35,10 @@ export default function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 w-full z-50 transition-shadow duration-300 ${
-        scrolled ? 'bg-white/95 backdrop-blur shadow-md' : 'bg-white shadow-sm'
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+        scrolled 
+          ? 'bg-white/80 backdrop-blur-lg border-b border-gray-200/40 shadow-soft' 
+          : 'bg-white'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

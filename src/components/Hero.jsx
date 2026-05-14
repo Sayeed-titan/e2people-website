@@ -1,178 +1,145 @@
+/*
+ * COMPONENT: Hero
+ * WHAT IT DOES: Full-viewport opening section. Eyebrow at top,
+ *               oversized headline (each word slides up in turn), light
+ *               subtext, primary CTA + ghost CTA with arrow.
+ *               An abstract concentric-rings SVG sits in the back-right.
+ * HOW TO TWEAK:
+ *  • Headline words & accent word: edit `hero.headline` in data.js
+ *  • Subtext / CTAs: edit `hero` in data.js
+ *  • Word stagger speed: change the 0.08 in `staggerChildren` below
+ */
 import { motion } from 'framer-motion'
 import { Link } from 'react-scroll'
+import { hero, brand, NAV_OFFSET } from '../constants/data'
 
-// Hero section — dramatic headline with word-by-word animation, geometric SVG element,
-// soft gradient fade, and asymmetric layout for visual interest.
-const NAV_OFFSET = -64
+const lineVariants = {
+  hidden: { opacity: 0, y: '60%' },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+}
 
 const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { 
-      staggerChildren: 0.08, 
-      delayChildren: 0.2,
-    },
-  },
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.25 } },
 }
 
-// Each word slides up with fade
-const wordVariants = {
-  hidden: { opacity: 0, y: 32 },
-  visible: (i) => ({
-    opacity: 1,
-    y: 0,
-    transition: { 
-      duration: 0.8,
-      delay: i * 0.08,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  }),
+const fadeVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } },
 }
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
+function ConcentricRings() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 600 600"
+      className="pointer-events-none absolute -right-24 sm:right-0 top-1/2 -translate-y-1/2 w-[520px] sm:w-[640px] lg:w-[820px] opacity-50 lg:opacity-60"
+    >
+      <defs>
+        <radialGradient id="ringFade" cx="50%" cy="50%" r="50%">
+          <stop offset="0%"   stopColor="#3D3A8C" stopOpacity="0.0" />
+          <stop offset="60%"  stopColor="#3D3A8C" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#3D3A8C" stopOpacity="0.0" />
+        </radialGradient>
+      </defs>
+      <g fill="none" stroke="url(#ringFade)" strokeWidth="1">
+        {Array.from({ length: 14 }).map((_, i) => (
+          <circle key={i} cx="300" cy="300" r={40 + i * 18} />
+        ))}
+      </g>
+      <circle cx="300" cy="300" r="6" fill="#3D3A8C" />
+    </svg>
+  )
 }
-
-// Geometric SVG element (thin circles and dots)
-const GeometricElement = () => (
-  <motion.svg
-    className="absolute -right-20 top-1/3 w-96 h-96 opacity-60"
-    viewBox="0 0 400 400"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    initial={{ opacity: 0, rotate: -20 }}
-    animate={{ opacity: 0.4, rotate: 0 }}
-    transition={{ duration: 1.2, ease: "easeOut" }}
-  >
-    {/* Concentric circles */}
-    <circle cx="200" cy="200" r="180" stroke="#3D3A8C" strokeWidth="1" opacity="0.4" />
-    <circle cx="200" cy="200" r="140" stroke="#8B89D9" strokeWidth="1" opacity="0.3" />
-    <circle cx="200" cy="200" r="100" stroke="#3D3A8C" strokeWidth="1.5" opacity="0.5" />
-    <circle cx="200" cy="200" r="60" stroke="#8B89D9" strokeWidth="1" opacity="0.3" />
-    
-    {/* Grid of dots */}
-    {[0, 40, 80, 120, 160, 200, 240, 280, 320, 360].map((x) =>
-      [0, 40, 80, 120, 160, 200, 240, 280, 320, 360].map((y) => (
-        <circle
-          key={`${x}-${y}`}
-          cx={x + 20}
-          cy={y + 20}
-          r="1.5"
-          fill="#3D3A8C"
-          opacity="0.3"
-        />
-      ))
-    )}
-  </motion.svg>
-)
 
 export default function Hero() {
-  const headline = ["Empowering", "Your Business", "Through", "Digital", "Innovation"]
-  const brandWord = 3 // "Digital" is index 3
-
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20"
-      style={{ background: 'linear-gradient(180deg, #FAFAFA 0%, #FAFAFA 80%, rgba(250,250,250,0) 100%)' }}
+      className="grain relative min-h-screen flex items-center bg-canvas overflow-hidden"
     >
-      {/* Geometric SVG background element */}
-      <GeometricElement />
+      <ConcentricRings />
 
-      {/* Subtle grain texture */}
+      {/* Subtle bottom fade into the next section */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-30"
-        style={{
-          backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.06 0 0 0 0 0.06 0 0 0 0 0.13 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")",
-          backgroundSize: '22px 22px',
-        }}
+        aria-hidden="true"
+        className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-b from-transparent to-canvas pointer-events-none z-[1]"
       />
 
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-32 pb-20">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
           className="max-w-4xl"
         >
-          {/* Main headline — split across lines with brand word highlighted */}
-          <div className="mb-8">
-            <h1 className="text-display font-display font-800 leading-[0.95] tracking-tight text-ink-DEFAULT mb-6">
-              {headline.map((word, i) => (
+          {/* Eyebrow */}
+          <motion.div variants={fadeVariants} className="mb-8 flex items-center gap-3">
+            <span className="h-px w-10 bg-ink/40" />
+            <span className="text-eyebrow uppercase font-semibold text-ink/70">
+              {hero.eyebrow}
+            </span>
+          </motion.div>
+
+          {/* Headline — word-stagger */}
+          <h1 className="font-display font-extrabold text-display tracking-tightest text-ink">
+            {hero.headline.map((line, idx) => (
+              <span key={idx} className="block overflow-hidden">
                 <motion.span
-                  key={i}
-                  custom={i}
-                  variants={wordVariants}
-                  className={i === brandWord ? "text-brand-700 block" : "block"}
+                  variants={lineVariants}
+                  className={`inline-block ${line.accent ? 'text-brand-700' : ''}`}
                 >
-                  {word}
+                  {line.text}
                 </motion.span>
-              ))}
-            </h1>
+              </span>
+            ))}
+          </h1>
 
-            {/* Thin blue line accent */}
-            <motion.div
-              variants={itemVariants}
-              className="w-16 h-1 bg-gradient-to-r from-brand-700 to-brand-400 rounded-full mt-8"
-            />
-          </div>
-
-          {/* Subheading — small, light, creates dramatic contrast */}
+          {/* Subtext */}
           <motion.p
-            variants={itemVariants}
-            className="text-lg sm:text-xl text-mute-soft font-light leading-relaxed max-w-2xl mb-12"
+            variants={fadeVariants}
+            className="mt-8 max-w-xl text-base sm:text-lg font-light leading-relaxed text-ink/65"
           >
-            Empowering Your Business Through Digital Innovation
+            {hero.subtext}
           </motion.p>
 
-          {/* CTA Buttons */}
-          <motion.div
-            variants={itemVariants}
-            className="flex flex-col sm:flex-row gap-5 sm:gap-6"
-          >
-            {/* Primary button — solid brand */}
+          {/* CTAs */}
+          <motion.div variants={fadeVariants} className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
             <Link
-              to="contact"
+              to={hero.primaryCta.to}
               smooth={true}
               duration={500}
               offset={NAV_OFFSET}
-              className="btn-primary px-8 py-4 rounded-lg font-semibold text-center cursor-pointer inline-block hover:shadow-soft transition-shadow duration-300"
+              className="btn-primary inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-medium cursor-pointer"
             >
-              Get Started →
+              {hero.primaryCta.label}
             </Link>
-
-            {/* Secondary button — text only with arrow */}
             <Link
-              to="services"
+              to={hero.secondaryCta.to}
               smooth={true}
               duration={500}
               offset={NAV_OFFSET}
-              className="px-8 py-4 rounded-lg font-semibold text-brand-700 border-2 border-brand-700 cursor-pointer inline-block text-center hover:bg-brand-50 transition-colors duration-300"
+              className="group inline-flex items-center gap-2 text-sm font-medium text-ink cursor-pointer"
             >
-              Explore Services →
+              <span className="text-link">{hero.secondaryCta.label}</span>
+              <span
+                aria-hidden="true"
+                className="inline-block transition-transform duration-300 group-hover:translate-x-1.5"
+              >
+                →
+              </span>
             </Link>
           </motion.div>
-        </motion.div>
 
-        {/* Trust badges (minimal, at the bottom) */}
-        <motion.div
-          variants={itemVariants}
-          className="mt-20 flex flex-wrap gap-x-8 gap-y-3 text-sm text-mute-soft"
-        >
-          <div className="flex items-center gap-2">
-            <span className="text-brand-700 font-bold">→</span>
-            <span>Fast Implementation</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-brand-700 font-bold">■</span>
-            <span>Secure Solutions</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-brand-700 font-bold">↗</span>
-            <span>Scalable Growth</span>
-          </div>
+          {/* Tagline strip */}
+          <motion.div
+            variants={fadeVariants}
+            className="mt-20 flex items-center gap-4 text-eyebrow uppercase text-ink/50"
+          >
+            <span>{brand.tagline}</span>
+            <span className="h-px flex-1 bg-ink/15 max-w-[280px]" />
+            <span>Dhaka · Bangladesh</span>
+          </motion.div>
         </motion.div>
       </div>
     </section>

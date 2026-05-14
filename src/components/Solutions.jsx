@@ -1,153 +1,129 @@
+/*
+ * COMPONENT: Solutions (the ONE dark moment on the page)
+ * WHAT IT DOES: Bold dark section. Each flagship platform is a numbered
+ *               row: 01 — Title — description. A thin 1px white line
+ *               separates each row. Hover tints the row with a soft blue
+ *               overlay and nudges its inner padding. A "Why choose us"
+ *               4-column stats strip closes the section.
+ * HOW TO TWEAK:
+ *  • Rows & stats: edit `solutions` in src/constants/data.js
+ *  • Hover effect: see `.solution-row` in src/index.css
+ */
 import { motion } from 'framer-motion'
-
-// Solutions section — full-width dark section with horizontal numbered rows.
-// Each row has a large faded number + title + description.
-// On hover: subtle blue-tinted overlay slides in.
-
-const solutions = [
-  {
-    number: '01',
-    title: 'Custom Web Solutions',
-    description: 'Build powerful web applications tailored to your unique business requirements with modern technologies and best practices.',
-  },
-  {
-    number: '02',
-    title: 'Mobile App Development',
-    description: 'Create intuitive mobile apps that engage users and drive business growth across iOS and Android platforms.',
-  },
-  {
-    number: '03',
-    title: 'API Integration',
-    description: 'Seamlessly connect your systems with third-party services through robust API design and integration solutions.',
-  },
-  {
-    number: '04',
-    title: 'Cloud Migration',
-    description: 'Transition your infrastructure to the cloud with minimal downtime and maximum security and efficiency.',
-  },
-  {
-    number: '05',
-    title: 'CRM Systems',
-    description: 'Strengthen customer relationships and drive business performance by centralizing customer data and improving service delivery.',
-  },
-]
-
-const whyChooseUs = [
-  { label: '500+', value: 'Projects Completed' },
-  { label: '98%', value: 'Client Satisfaction' },
-  { label: '15+', value: 'Years Combined Experience' },
-  { label: '24/7', value: 'Support Available' },
-]
+import { Link } from 'react-scroll'
+import { solutions, NAV_OFFSET } from '../constants/data'
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.12, delayChildren: 0.1 },
-  },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
 }
 
-const itemVariants = {
-  hidden: { opacity: 0, x: 30 },
+const rowVariants = {
+  hidden: { opacity: 0, x: 36 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] } },
+}
+
+const titleVariants = {
+  hidden: { opacity: 0, x: -28 },
   visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
-}
-
-function SolutionRow({ solution, index }) {
-  return (
-    <motion.div
-      variants={itemVariants}
-      className="solution-row py-10 border-t border-white/10 first:border-t-0 last:border-b last:border-b-white/10 transition-all duration-300"
-    >
-      <div className="flex items-start gap-8 md:gap-12">
-        {/* Large faded number */}
-        <div className="flex-shrink-0">
-          <span className="text-7xl md:text-8xl font-display font-900 text-white/15 leading-none select-none">
-            {solution.number}
-          </span>
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 pt-2">
-          <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 leading-snug">
-            {solution.title}
-          </h3>
-          <p className="text-lg text-white/60 leading-relaxed">
-            {solution.description}
-          </p>
-        </div>
-      </div>
-    </motion.div>
-  )
 }
 
 export default function Solutions() {
   return (
     <section
       id="solutions"
-      className="relative py-24 md:py-32 bg-ink-DEFAULT scroll-mt-16 overflow-hidden"
+      className="relative py-24 md:py-36 bg-ink text-white scroll-mt-16 overflow-hidden"
     >
-      {/* Subtle gradient overlay (darker at edges) */}
-      <div className="absolute inset-0 bg-gradient-to-br from-ink-soft to-ink-DEFAULT pointer-events-none" />
-
-      {/* Subtle grid texture */}
+      {/* faint dot grid + corner glow */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-10"
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none opacity-[0.10]"
         style={{
-          backgroundImage: "radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px)",
-          backgroundSize: '44px 44px',
+          backgroundImage: 'radial-gradient(rgba(255,255,255,0.18) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
         }}
       />
+      <div aria-hidden="true" className="absolute -top-32 -left-32 w-[420px] h-[420px] rounded-full bg-brand-700/30 blur-[120px]" />
+      <div aria-hidden="true" className="absolute -bottom-24 -right-24 w-[380px] h-[380px] rounded-full bg-brand-accent/20 blur-[120px]" />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section header */}
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Title */}
         <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="mb-16 md:mb-20"
+          variants={titleVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.4 }}
+          className="mb-16 md:mb-24 max-w-3xl"
         >
-          <h2 className="text-5xl md:text-6xl lg:text-7xl font-display font-800 text-white leading-[0.95] mb-6">
-            Why Choose<br />e2People
+          <div className="text-eyebrow uppercase font-semibold text-white/55 mb-5">
+            {solutions.eyebrow}
+          </div>
+          <h2 className="font-display font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[0.95] tracking-tightest whitespace-pre-line">
+            {solutions.title}
           </h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-brand-400 to-brand-accent rounded-full" />
         </motion.div>
 
-        {/* Solutions rows */}
+        {/* Numbered rows */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          className="mb-24"
+          viewport={{ once: true, amount: 0.15 }}
+          className="border-t border-white/10"
         >
-          {solutions.map((solution, index) => (
-            <SolutionRow key={solution.number} solution={solution} index={index} />
+          {solutions.rows.map((row) => (
+            <motion.div key={row.number} variants={rowVariants}>
+              <article className="solution-row group py-10 md:py-12 border-b border-white/10 flex flex-col md:flex-row gap-6 md:gap-12 md:items-start">
+                <div className="flex items-baseline gap-4 md:w-44 shrink-0">
+                  <span className="font-display font-extrabold text-5xl md:text-6xl text-white/20 leading-none select-none">
+                    {row.number}
+                  </span>
+                  <span className="h-px w-10 bg-white/30 mt-6 md:hidden" />
+                </div>
+
+                <div className="flex-1">
+                  <h3 className="font-display font-bold text-2xl sm:text-3xl text-white leading-snug">
+                    {row.title}
+                  </h3>
+                  <p className="mt-3 text-white/65 font-light leading-relaxed max-w-2xl">
+                    {row.description}
+                  </p>
+                </div>
+
+                <div className="md:pt-2">
+                  <Link
+                    to="contact"
+                    smooth={true}
+                    duration={500}
+                    offset={NAV_OFFSET}
+                    className="inline-flex items-center gap-2 text-sm text-white/80 hover:text-white cursor-pointer transition-colors"
+                  >
+                    <span className="text-link">Discuss</span>
+                    <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                  </Link>
+                </div>
+              </article>
+            </motion.div>
           ))}
         </motion.div>
 
-        {/* Stats grid — "Why Choose Us" */}
+        {/* Stats strip */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 pt-16 border-t border-white/10"
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+          className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden"
         >
-          {whyChooseUs.map((item, idx) => (
-            <motion.div
-              key={idx}
-              whileHover={{ y: -4 }}
-              transition={{ duration: 0.3 }}
-              className="text-center"
-            >
-              <div className="text-4xl md:text-5xl font-display font-800 text-brand-400 mb-2">
-                {item.label}
+          {solutions.stats.map((s) => (
+            <div key={s.label} className="bg-ink p-6 sm:p-7">
+              <div className="font-display font-extrabold text-3xl sm:text-4xl text-brand-accent">
+                {s.value}
               </div>
-              <div className="text-white/60 font-medium">
-                {item.value}
+              <div className="mt-2 text-sm text-white/60 leading-snug">
+                {s.label}
               </div>
-            </motion.div>
+            </div>
           ))}
         </motion.div>
       </div>

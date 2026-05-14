@@ -1,229 +1,174 @@
+/*
+ * COMPONENT: Footer
+ * WHAT IT DOES: Refined dark footer. Brand block (logo + tagline) at left,
+ *               three link columns (Quick Links, Services, Legal), bottom
+ *               bar with copyright and "Made with care.". Social icons
+ *               are minimal outline SVGs with a subtle scale on hover.
+ * HOW TO TWEAK:
+ *  • Link lists / social URLs: edit `footer` in src/constants/data.js
+ *  • Tagline / "Made with care": edit `footer.tagline` and `footer.madeWith`
+ */
 import { motion } from 'framer-motion'
 import { Link } from 'react-scroll'
+import { footer, brand, contact, NAV_OFFSET } from '../constants/data'
 
-// Footer — refined and complete with dark background, multi-column layout,
-// outline social icons, and bottom bar with copyright + tagline.
-const NAV_OFFSET = -64
-
-const quickLinks = [
-  { label: 'Home', to: 'hero' },
-  { label: 'About', to: 'about' },
-  { label: 'Services', to: 'services' },
-  { label: 'Solutions', to: 'solutions' },
-  { label: 'Team', to: 'team' },
-]
-
-const serviceLinks = [
-  { label: 'Enterprise Software', to: 'services' },
-  { label: 'Digital Transformation', to: 'services' },
-  { label: 'Mobile Development', to: 'services' },
-  { label: 'Cloud Solutions', to: 'services' },
-  { label: 'Data & Analytics', to: 'services' },
-]
-
-const legalLinks = [
-  { label: 'Privacy Policy', href: '#' },
-  { label: 'Terms of Service', href: '#' },
-  { label: 'Cookie Policy', href: '#' },
-  { label: 'Code of Conduct', href: '#' },
-]
-
-const socialLinks = [
-  { icon: 'f', label: 'Facebook', href: '#' },
-  { icon: 'in', label: 'LinkedIn', href: '#' },
-  { icon: 'tw', label: 'Twitter', href: '#' },
-  { icon: 'gh', label: 'GitHub', href: '#' },
-]
-
-const PHONE_DISPLAY = '+880 1713 335334'
-const PHONE_TEL = '+8801713335334'
-const EMAIL = 'contact@e2people.com'
+const Icons = {
+  linkedin: (p) => (
+    <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="3" />
+      <path d="M8 10v7M8 7.2v.1M12 17v-4.5a2.5 2.5 0 0 1 5 0V17M12 17v-7" />
+    </svg>
+  ),
+  facebook: (p) => (
+    <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 4h-2a4 4 0 0 0-4 4v2H8v4h2v8h4v-8h2.5l.5-4H14V8a1 1 0 0 1 1-1h2V4z" />
+    </svg>
+  ),
+  twitter: (p) => (
+    <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 4l7.5 9.5L4.5 20H7l5.6-6 4.4 6H21l-7.8-10.4L20 4h-2.4l-4.6 5.1L9 4H4z" />
+    </svg>
+  ),
+  github: (p) => (
+    <svg {...p} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 19c-4 1.5-4-2-6-2m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 4 5.4 4.3 5.4 4.3a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 10.7c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V22" />
+    </svg>
+  ),
+}
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear()
+  const year = new Date().getFullYear()
 
   return (
-    <footer className="bg-white text-ink-DEFAULT relative overflow-hidden">
-      {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white to-canvas-DEFAULT pointer-events-none" />
-
-      {/* Subtle texture overlay — noise pattern */}
+    <footer className="relative bg-ink text-white">
+      {/* faint dot grid */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-5"
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none opacity-[0.07]"
         style={{
-          backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><filter id=%22noise%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%222%22 result=%22noise%22 /><feDisplacementMap in=%22SourceGraphic%22 in2=%22noise%22 scale=%226%22 /></filter><rect width=%22100%22 height=%22100%22 fill=%220F1020%22 filter=%22url(%23noise)%22 /></svg>')",
-          backgroundSize: '100px 100px',
+          backgroundImage: 'radial-gradient(rgba(255,255,255,0.18) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
         }}
       />
+      <div aria-hidden="true" className="absolute -top-32 left-1/2 -translate-x-1/2 w-[520px] h-[520px] rounded-full bg-brand-700/15 blur-[140px]" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Main footer content */}
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="py-20 grid md:grid-cols-5 gap-10 md:gap-8 border-b border-ink-DEFAULT/10"
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="py-20 grid gap-12 lg:gap-16 lg:grid-cols-12"
         >
-          {/* Column 1: Brand */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
+          {/* Brand block */}
+          <div className="lg:col-span-4">
             <img
               src="/logo.png"
-              alt="e2People"
-              className="h-24 mb-6 rounded-lg"
+              alt={brand.full}
+              className="h-12 w-auto bg-white/95 rounded-md p-2"
             />
-            <p className="text-ink-DEFAULT/70 text-sm leading-relaxed font-light">
-              Digital innovation partner delivering smart, scalable, and sustainable solutions.
+            <p className="mt-6 text-white/70 leading-relaxed text-sm max-w-sm font-light">
+              {footer.tagline}
             </p>
-          </motion.div>
 
-          {/* Column 2: Quick Links */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            viewport={{ once: true }}
-          >
-            <h4 className="text-sm font-bold tracking-editorial uppercase text-ink-DEFAULT/80 mb-6">
-              Quick Links
-            </h4>
+            <div className="mt-7 flex items-center gap-3">
+              {footer.socialLinks.map((s) => {
+                const Icon = Icons[s.icon]
+                return (
+                  <motion.a
+                    key={s.icon}
+                    href={s.href}
+                    aria-label={s.label}
+                    whileHover={{ scale: 1.15 }}
+                    transition={{ duration: 0.25 }}
+                    className="inline-flex w-10 h-10 items-center justify-center rounded-full border border-white/15 text-white/70 hover:text-white hover:border-white/45 transition-colors"
+                  >
+                    {Icon ? <Icon width={16} height={16} /> : null}
+                  </motion.a>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div className="lg:col-span-2">
+            <div className="text-eyebrow uppercase font-semibold text-white/55 mb-5">Quick links</div>
             <ul className="space-y-3">
-              {quickLinks.map((link) => (
-                <li key={link.to}>
+              {footer.quickLinks.map((l) => (
+                <li key={`quick-${l.to}`}>
                   <Link
-                    to={link.to}
+                    to={l.to}
                     smooth={true}
                     duration={500}
                     offset={NAV_OFFSET}
-                    className="text-ink-DEFAULT/60 hover:text-ink-DEFAULT transition-colors duration-300 cursor-pointer text-sm font-light"
+                    className="text-sm text-white/70 hover:text-white cursor-pointer transition-colors"
                   >
-                    {link.label}
+                    {l.label}
                   </Link>
                 </li>
               ))}
             </ul>
-          </motion.div>
+          </div>
 
-          {/* Column 3: Services */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            <h4 className="text-sm font-bold tracking-editorial uppercase text-ink-DEFAULT/80 mb-6">
-              Services
-            </h4>
+          {/* Services */}
+          <div className="lg:col-span-3">
+            <div className="text-eyebrow uppercase font-semibold text-white/55 mb-5">Services</div>
             <ul className="space-y-3">
-              {serviceLinks.map((link) => (
-                <li key={link.to}>
+              {footer.serviceLinks.map((l) => (
+                <li key={`svc-${l.label}`}>
                   <Link
-                    to={link.to}
+                    to={l.to}
                     smooth={true}
                     duration={500}
                     offset={NAV_OFFSET}
-                    className="text-ink-DEFAULT/60 hover:text-ink-DEFAULT transition-colors duration-300 cursor-pointer text-sm font-light"
+                    className="text-sm text-white/70 hover:text-white cursor-pointer transition-colors"
                   >
-                    {link.label}
+                    {l.label}
                   </Link>
                 </li>
               ))}
             </ul>
-          </motion.div>
+          </div>
 
-          {/* Column 4: Legal */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            viewport={{ once: true }}
-          >
-            <h4 className="text-sm font-bold tracking-editorial uppercase text-ink-DEFAULT/80 mb-6">
-              Legal
-            </h4>
+          {/* Legal + contact preview */}
+          <div className="lg:col-span-3">
+            <div className="text-eyebrow uppercase font-semibold text-white/55 mb-5">Get in touch</div>
+            <ul className="space-y-3 text-sm">
+              <li>
+                <a href={`mailto:${contact.email}`} className="text-white/80 hover:text-white transition-colors break-words">
+                  {contact.email}
+                </a>
+              </li>
+              <li>
+                <a href={`tel:${contact.phone.tel}`} className="text-white/80 hover:text-white transition-colors">
+                  {contact.phone.display}
+                </a>
+              </li>
+            </ul>
+
+            <div className="text-eyebrow uppercase font-semibold text-white/55 mt-8 mb-4">Legal</div>
             <ul className="space-y-3">
-              {legalLinks.map((link) => (
-                <li key={link.label}>
+              {footer.legalLinks.map((l) => (
+                <li key={`legal-${l.label}`}>
                   <a
-                    href={link.href}
-                    className="text-ink-DEFAULT/60 hover:text-ink-DEFAULT transition-colors duration-300 text-sm font-light"
+                    href={l.href}
+                    onClick={(e) => {
+                      if (l.href === '#') e.preventDefault()
+                    }}
+                    className="text-sm text-white/60 hover:text-white transition-colors"
                   >
-                    {link.label}
+                    {l.label}
                   </a>
                 </li>
               ))}
             </ul>
-          </motion.div>
-
-          {/* Column 5: Contact */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            viewport={{ once: true }}
-          >
-            <h4 className="text-sm font-bold tracking-editorial uppercase text-ink-DEFAULT/80 mb-6">
-              Contact
-            </h4>
-            <div className="space-y-4">
-              <div>
-                <p className="text-xs text-ink-DEFAULT/40 uppercase tracking-wider mb-1">Email</p>
-                <a
-                  href={`mailto:${EMAIL}`}
-                  className="text-ink-DEFAULT/80 hover:text-ink-DEFAULT transition-colors duration-300 text-sm font-light break-words"
-                >
-                  {EMAIL}
-                </a>
-              </div>
-              <div>
-                <p className="text-xs text-ink-DEFAULT/40 uppercase tracking-wider mb-1">Phone</p>
-                <a
-                  href={`tel:${PHONE_TEL}`}
-                  className="text-ink-DEFAULT/80 hover:text-ink-DEFAULT transition-colors duration-300 text-sm font-light"
-                >
-                  {PHONE_DISPLAY}
-                </a>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* Footer bottom — copyright + tagline */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          viewport={{ once: true }}
-          className="py-8 flex flex-col sm:flex-row justify-between items-center gap-4"
-        >
-          <div className="text-sm text-ink-DEFAULT/50 font-light">
-            &copy; {currentYear} e2People Limited. All rights reserved.
-          </div>
-
-          {/* Social icons — outline style */}
-          <div className="flex gap-4">
-            {socialLinks.map((social) => (
-              <motion.a
-                key={social.label}
-                href={social.href}
-                aria-label={social.label}
-                className="w-10 h-10 flex items-center justify-center border border-ink-DEFAULT/30 rounded-full bg-ink-DEFAULT/5 text-ink-DEFAULT/60 hover:bg-ink-DEFAULT/10 hover:text-ink-DEFAULT hover:border-ink-DEFAULT/60 transition-all duration-300"
-                whileHover={{ scale: 1.1, y: -2 }}
-              >
-                <span className="text-sm font-medium">{social.icon}</span>
-              </motion.a>
-            ))}
-          </div>
-
-          <div className="text-sm text-ink-DEFAULT/50 font-light">
-            Made with care • Smart Evolution
           </div>
         </motion.div>
+
+        <div className="border-t border-white/10 py-7 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-white/50">
+          <p>© {year} {brand.full}. All rights reserved.</p>
+          <p>{footer.madeWith}</p>
+        </div>
       </div>
     </footer>
   )

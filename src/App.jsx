@@ -3,6 +3,7 @@ import Hero from './components/Hero'
 import About from './components/About'
 import Services from './components/Services'
 import Solutions from './components/Solutions'
+import Blog from './components/Blog'
 import Products from './components/Products'
 import Partners from './components/Partners'
 import Team from './components/Team'
@@ -17,6 +18,7 @@ export default function App() {
       <About />
       <Services />
       <Solutions />
+      <Blog />
       <Products />
       <Partners />
       <Team />

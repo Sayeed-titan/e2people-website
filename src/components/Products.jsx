@@ -78,10 +78,10 @@ export default function Products() {
           className="text-center mb-14"
         >
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Our Products
+            Our Work Speaks for Itself
           </h2>
           <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-            Industry-leading solutions trusted by government agencies and enterprises.
+            Over the years, we've helped businesses across industries achieve digital transformation through our innovative solutions.
           </p>
           <div className="w-20 h-1 bg-gradient-to-r from-brand-700 to-brand-400 mx-auto mt-5 rounded-full" />
         </motion.div>

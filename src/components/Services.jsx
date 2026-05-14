@@ -1,52 +1,73 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-scroll'
+import { Building, RotateCw, Users, BarChart3, Lock, Rocket } from 'lucide-react'
 
 const NAV_OFFSET = -64
 
 const services = [
   {
     id: 1,
-    icon: '🏢',
+    icon: 'building',
     title: 'Enterprise Software Solutions',
     description: 'Custom-built software platforms tailored to streamline your business operations and enhance efficiency.',
     featured: true,
   },
   {
     id: 2,
-    icon: '🔄',
+    icon: 'rotatecw',
     title: 'Digital Transformation',
     description: 'End-to-end digital transformation services to modernize your business processes and systems.',
     featured: true,
   },
   {
     id: 3,
-    icon: '👥',
+    icon: 'users',
     title: 'Customer Engagement',
     description: 'Solutions designed to enhance customer interaction and build lasting relationships.',
     featured: false,
   },
   {
     id: 4,
-    icon: '📊',
+    icon: 'chart',
     title: 'Data & Analytics',
     description: 'Harness data-driven insights to make informed decisions and optimize operations.',
     featured: false,
   },
   {
     id: 5,
-    icon: '🔐',
+    icon: 'lock',
     title: 'Secure Infrastructure',
     description: 'Robust and secure digital infrastructure protecting your business and data.',
     featured: false,
   },
   {
     id: 6,
-    icon: '🚀',
+    icon: 'rocket',
     title: 'Cloud Solutions',
     description: 'Scalable cloud-based solutions for flexibility, reliability, and growth.',
     featured: false,
   },
 ]
+
+const renderIcon = (iconType, className) => {
+  const iconProps = className || 'w-12 h-12'
+  switch (iconType) {
+    case 'building':
+      return <Building className={iconProps} />
+    case 'rotatecw':
+      return <RotateCw className={iconProps} />
+    case 'users':
+      return <Users className={iconProps} />
+    case 'chart':
+      return <BarChart3 className={iconProps} />
+    case 'lock':
+      return <Lock className={iconProps} />
+    case 'rocket':
+      return <Rocket className={iconProps} />
+    default:
+      return null
+  }
+}
 
 function ServiceCard({ service, index }) {
   const isFeatured = service.featured
@@ -74,9 +95,9 @@ function ServiceCard({ service, index }) {
         transition={{ duration: 0.3 }}
       >
         <div className="absolute inset-0 bg-brand-100 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ transform: 'scale(1.8)' }} />
-        <span className="text-5xl sm:text-6xl relative z-10 group-hover:text-white transition-colors duration-300">
-          {service.icon}
-        </span>
+        <div className="relative z-10 text-brand-700 group-hover:text-white transition-colors duration-300">
+          {renderIcon(service.icon, 'w-14 h-14 sm:w-16 sm:h-16')}
+        </div>
       </motion.div>
 
       {/* Content */}

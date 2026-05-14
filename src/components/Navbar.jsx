@@ -11,6 +11,8 @@ const navItems = [
   { label: 'About', to: 'about' },
   { label: 'Services', to: 'services' },
   { label: 'Solutions', to: 'solutions' },
+  { label: 'Portfolio', to: 'products' },
+  { label: 'Blog', to: 'blog' },
   { label: 'Team', to: 'team' },
   { label: 'Contact', to: 'contact' },
 ]

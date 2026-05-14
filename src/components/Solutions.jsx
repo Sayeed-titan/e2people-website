@@ -25,6 +25,11 @@ const solutions = [
     title: 'Cloud Migration',
     description: 'Transition your infrastructure to the cloud with minimal downtime and maximum security and efficiency.',
   },
+  {
+    number: '05',
+    title: 'CRM Systems',
+    description: 'Strengthen customer relationships and drive business performance by centralizing customer data and improving service delivery.',
+  },
 ]
 
 const whyChooseUs = [

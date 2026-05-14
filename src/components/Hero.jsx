@@ -124,7 +124,7 @@ export default function Hero() {
             variants={itemVariants}
             className="text-lg sm:text-xl text-mute-soft font-light leading-relaxed max-w-2xl mb-12"
           >
-            Fast-growing tech-enabled service provider delivering smart, scalable, and sustainable solutions to businesses and communities across Bangladesh.
+            Empowering Your Business Through Digital Innovation
           </motion.p>
 
           {/* CTA Buttons */}

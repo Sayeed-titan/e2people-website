@@ -111,7 +111,7 @@ export default function About() {
                 >
                   {about.values.map((v) => (
                     <motion.li key={v.title} variants={fadeUp}>
-                      <div className="value-row py-4 flex items-baseline justify-between gap-4 text-white/80">
+                      <div className="py-4 flex items-baseline justify-between gap-4 text-white/80">
                         <span className="font-semibold text-base sm:text-lg">{v.title}</span>
                         <span className="text-sm text-white/50 max-w-[18ch] text-right">{v.desc}</span>
                       </div>

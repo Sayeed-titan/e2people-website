@@ -1,13 +1,9 @@
 /*
  * COMPONENT: Footer
- * WHAT IT DOES: Refined dark footer with:
- *   • Giant "e" watermark peeking above the footer edge
- *   • Brand block (logo + tagline + socials + Google Map)
- *   • Three link columns (Quick Links, Services, Get In Touch + Legal)
- *   • Bottom bar with copyright and "Made with care by e2People."
- * HOW TO TWEAK:
- *  • Link lists / social URLs: edit `footer` in src/constants/data.js
- *  • Tagline / "Made with care": edit `footer.tagline` and `footer.madeWith`
+ * WHAT IT DOES: Clean dark footer.
+ *   Row 1 — Logo + tagline + socials | Quick Links | Services | Get In Touch + Legal
+ *   Row 2 — Full-width Google Map with address
+ *   Row 3 — Copyright bar
  */
 import { motion } from 'framer-motion'
 import { Link } from 'react-scroll'
@@ -44,57 +40,40 @@ export default function Footer() {
 
   return (
     <footer className="relative bg-ink text-white overflow-hidden">
-      {/* ── "e" watermark peaking above footer ── */}
+      {/* Subtle dot-grid texture */}
       <div
         aria-hidden="true"
-        className="pointer-events-none select-none absolute left-1/2 -translate-x-1/2 z-0"
-        style={{ top: '-72px', width: '180px', height: '144px', overflow: 'hidden' }}
-      >
-        <img
-          src="/logo.png"
-          alt=""
-          style={{
-            height: '180px',
-            width: 'auto',
-            filter: 'brightness(0) invert(1)',
-            opacity: 0.07,
-            userSelect: 'none',
-          }}
-        />
-      </div>
-
-      {/* Dot-grid texture */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 pointer-events-none opacity-[0.07]"
+        className="absolute inset-0 pointer-events-none opacity-[0.05]"
         style={{
-          backgroundImage: 'radial-gradient(rgba(255,255,255,0.18) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
+          backgroundImage: 'radial-gradient(rgba(255,255,255,0.2) 1px, transparent 1px)',
+          backgroundSize: '32px 32px',
         }}
       />
-      {/* Glow blob */}
-      <div aria-hidden="true" className="absolute -top-32 left-1/2 -translate-x-1/2 w-[520px] h-[520px] rounded-full bg-brand-700/15 blur-[140px] pointer-events-none" />
+      {/* Top glow */}
+      <div aria-hidden="true" className="absolute -top-40 left-1/4 w-[400px] h-[400px] rounded-full bg-brand-700/20 blur-[120px] pointer-events-none" />
+      <div aria-hidden="true" className="absolute -top-24 right-1/4 w-[280px] h-[280px] rounded-full bg-brand-700/10 blur-[100px] pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* ── TOP ROW: brand + links ── */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="py-20 grid gap-12 lg:gap-10 lg:grid-cols-12"
+          className="pt-16 pb-12 grid gap-10 lg:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-12"
         >
-          {/* Brand block + Map */}
-          <div className="lg:col-span-4 flex flex-col gap-6">
+          {/* Brand */}
+          <div className="sm:col-span-2 lg:col-span-4">
             <img
               src="/logo.png"
               alt={brand.full}
-              className="h-24 w-auto brightness-0 invert"
+              className="h-16 w-auto brightness-0 invert mb-5"
             />
-            <p className="text-white/70 leading-relaxed text-sm max-w-sm font-light">
+            <p className="text-white/60 text-sm leading-relaxed max-w-xs font-light">
               {footer.tagline}
             </p>
-
-            <div className="flex items-center gap-3">
+            <div className="mt-6 flex items-center gap-3">
               {footer.socialLinks.map((s) => {
                 const Icon = Icons[s.icon]
                 return (
@@ -102,38 +81,21 @@ export default function Footer() {
                     key={`social-${s.icon}`}
                     href={s.href}
                     aria-label={s.label}
-                    whileHover={{ scale: 1.15 }}
-                    transition={{ duration: 0.25 }}
-                    className="inline-flex w-10 h-10 items-center justify-center rounded-full border border-white/15 text-white/70 hover:text-white hover:border-white/45 transition-colors"
+                    whileHover={{ scale: 1.12 }}
+                    transition={{ duration: 0.22 }}
+                    className="inline-flex w-9 h-9 items-center justify-center rounded-full border border-white/15 text-white/60 hover:text-white hover:border-white/40 transition-colors"
                   >
-                    {Icon ? <Icon width={16} height={16} /> : null}
+                    {Icon ? <Icon width={15} height={15} /> : null}
                   </motion.a>
                 )
               })}
             </div>
-
-            {/* Google Map embed */}
-            <div className="rounded-2xl overflow-hidden border border-white/10 shadow-lg">
-              <iframe
-                title="e2People Office Location"
-                src="https://maps.google.com/maps?q=Baridhara+DOHS+Road+1+Dhaka+Bangladesh&output=embed&z=16"
-                width="100%"
-                height="200"
-                style={{ border: 0, display: 'block' }}
-                allowFullScreen=""
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </div>
-            <p className="text-white/45 text-xs leading-relaxed">
-              {contact.address}
-            </p>
           </div>
 
           {/* Quick Links */}
           <div className="lg:col-span-2">
-            <div className="text-eyebrow uppercase font-semibold text-white/55 mb-5">Quick Links</div>
-            <ul className="space-y-3">
+            <p className="text-[0.7rem] uppercase tracking-widest font-semibold text-white/40 mb-4">Quick Links</p>
+            <ul className="space-y-2.5">
               {footer.quickLinks.map((l) => (
                 <li key={`quick-${l.to}`}>
                   <Link
@@ -141,7 +103,7 @@ export default function Footer() {
                     smooth={true}
                     duration={500}
                     offset={NAV_OFFSET}
-                    className="text-sm text-white/70 hover:text-white cursor-pointer transition-colors"
+                    className="text-sm text-white/65 hover:text-white cursor-pointer transition-colors"
                   >
                     {l.label}
                   </Link>
@@ -152,8 +114,8 @@ export default function Footer() {
 
           {/* Services */}
           <div className="lg:col-span-3">
-            <div className="text-eyebrow uppercase font-semibold text-white/55 mb-5">Services</div>
-            <ul className="space-y-3">
+            <p className="text-[0.7rem] uppercase tracking-widest font-semibold text-white/40 mb-4">Services</p>
+            <ul className="space-y-2.5">
               {footer.serviceLinks.map((l) => (
                 <li key={`svc-${l.label}`}>
                   <Link
@@ -161,7 +123,7 @@ export default function Footer() {
                     smooth={true}
                     duration={500}
                     offset={NAV_OFFSET}
-                    className="text-sm text-white/70 hover:text-white cursor-pointer transition-colors"
+                    className="text-sm text-white/65 hover:text-white cursor-pointer transition-colors"
                   >
                     {l.label}
                   </Link>
@@ -172,27 +134,30 @@ export default function Footer() {
 
           {/* Get In Touch + Legal */}
           <div className="lg:col-span-3">
-            <div className="text-eyebrow uppercase font-semibold text-white/55 mb-5">Get In Touch</div>
-            <ul className="space-y-3 text-sm">
+            <p className="text-[0.7rem] uppercase tracking-widest font-semibold text-white/40 mb-4">Get In Touch</p>
+            <ul className="space-y-2.5 text-sm mb-8">
               <li>
-                <a href={`mailto:${contact.email}`} className="text-white/80 hover:text-white transition-colors break-words">
+                <a href={`mailto:${contact.email}`} className="text-white/65 hover:text-white transition-colors break-all">
                   {contact.email}
                 </a>
               </li>
               <li>
-                <a href={`tel:${contact.phone.tel}`} className="text-white/80 hover:text-white transition-colors">
+                <a href={`tel:${contact.phone.tel}`} className="text-white/65 hover:text-white transition-colors">
                   {contact.phone.display}
                 </a>
               </li>
+              <li className="text-white/45 leading-relaxed pt-1">
+                {contact.address}
+              </li>
             </ul>
 
-            <div className="text-eyebrow uppercase font-semibold text-white/55 mt-8 mb-4">Legal</div>
-            <ul className="space-y-3">
+            <p className="text-[0.7rem] uppercase tracking-widest font-semibold text-white/40 mb-4">Legal</p>
+            <ul className="space-y-2.5">
               {footer.legalLinks.map((l) => (
                 <li key={`legal-${l.label}`}>
                   <a
                     href={l.href}
-                    className="text-sm text-white/60 hover:text-white transition-colors"
+                    className="text-sm text-white/50 hover:text-white transition-colors"
                   >
                     {l.label}
                   </a>
@@ -202,7 +167,34 @@ export default function Footer() {
           </div>
         </motion.div>
 
-        <div className="border-t border-white/10 py-7 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-white/50">
+        {/* ── DIVIDER ── */}
+        <div className="h-px bg-white/[0.08]" />
+
+        {/* ── MAP ROW ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          className="py-10"
+        >
+          <p className="text-[0.7rem] uppercase tracking-widest font-semibold text-white/40 mb-4">Our Office</p>
+          <div className="rounded-2xl overflow-hidden border border-white/10 shadow-xl">
+            <iframe
+              title="e2People Office Location"
+              src="https://maps.google.com/maps?q=Baridhara+DOHS+Road+1+Dhaka+Bangladesh&output=embed&z=16"
+              width="100%"
+              height="220"
+              style={{ border: 0, display: 'block' }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        </motion.div>
+
+        {/* ── BOTTOM BAR ── */}
+        <div className="border-t border-white/[0.08] py-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-white/35">
           <p>© {year} {brand.full}. All rights reserved.</p>
           <p>{footer.madeWith}</p>
         </div>

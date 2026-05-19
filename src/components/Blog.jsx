@@ -18,7 +18,15 @@ const cardVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
 }
 
-function ArticleCover({ number, tone }) {
+function ArticleCover({ number, tone, image }) {
+  if (image) {
+    return (
+      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+        <img src={image} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
+      </div>
+    )
+  }
   return (
     <div className={`relative aspect-[16/10] bg-gradient-to-br ${tone} overflow-hidden`}>
       <div aria-hidden="true" className="absolute inset-0 opacity-25"
@@ -37,7 +45,7 @@ export default function Blog() {
   useEffect(() => {
     supabase
       .from('blog_posts')
-      .select('slug, title, category, excerpt, cover_tone, read_time')
+      .select('slug, title, category, excerpt, cover_tone, cover_image, read_time')
       .eq('published', true)
       .order('published_at', { ascending: false })
       .limit(3)
@@ -94,7 +102,7 @@ export default function Blog() {
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
               className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-ink/[0.06] shadow-card hover:shadow-soft transition-shadow duration-300"
             >
-              <ArticleCover number={article.number} tone={article.cover_tone || 'from-brand-700 to-brand-400'} />
+              <ArticleCover number={article.number} tone={article.cover_tone || 'from-brand-700 to-brand-400'} image={article.cover_image} />
               <div className="flex flex-1 flex-col p-7">
                 <div className="flex items-center gap-3 text-xs uppercase tracking-wider text-ink/55 mb-3">
                   <span className="text-brand-700 font-semibold">{article.category}</span>

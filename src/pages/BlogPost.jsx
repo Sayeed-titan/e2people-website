@@ -135,8 +135,14 @@ export default function BlogPost() {
               {post.excerpt}
             </p>
 
-            {/* Cover gradient strip */}
-            <div className={`mt-10 w-full h-2 rounded-full bg-gradient-to-r ${post.cover_tone}`} />
+            {/* Cover photo or gradient strip */}
+            {post.cover_image ? (
+              <div className="mt-10 rounded-2xl overflow-hidden aspect-video shadow-soft">
+                <img src={post.cover_image} alt={post.title} className="w-full h-full object-cover" />
+              </div>
+            ) : (
+              <div className={`mt-10 w-full h-2 rounded-full bg-gradient-to-r ${post.cover_tone}`} />
+            )}
           </motion.div>
         </div>
       </header>

@@ -3,9 +3,10 @@
  * Full CMS admin panel. Protected by Supabase Auth (email + password).
  * Lucide icons in sidebar. TipTap rich text editor for blog posts.
  */
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import * as staticData from '../constants/data'
+import ImageUpload from '../components/admin/ImageUpload'
 import {
   Building2, Navigation, Rocket, Info, Settings2, Lightbulb,
   FolderOpen, Users, Handshake, BookOpen, Phone, LayoutTemplate,
@@ -103,6 +104,9 @@ function ToolbarBtn({ onClick, active, title, children }) {
   )
 }
 function RichEditor({ value, onChange }) {
+  const imgInputRef = useRef(null)
+  const [imgUploading, setImgUploading] = useState(false)
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -110,7 +114,7 @@ function RichEditor({ value, onChange }) {
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       Link.configure({ openOnClick: false }),
-      Image,
+      Image.configure({ HTMLAttributes: { class: 'rounded-xl max-w-full my-4' } }),
       Placeholder.configure({ placeholder: 'Start writing your article here…' }),
     ],
     content: value || '',
@@ -119,14 +123,25 @@ function RichEditor({ value, onChange }) {
 
   if (!editor) return null
 
-  const btn = (label, action, active) => (
-    <ToolbarBtn onClick={action} active={active} title={label}>
-      <span className="font-mono text-[11px] font-bold">{label}</span>
-    </ToolbarBtn>
-  )
+  const uploadInlineImage = async (file) => {
+    if (!file) return
+    setImgUploading(true)
+    const ext  = file.name.split('.').pop()
+    const name = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+    const { error } = await supabase.storage.from('blog-images').upload(name, file, { cacheControl: '3600' })
+    if (!error) {
+      const { data } = supabase.storage.from('blog-images').getPublicUrl(name)
+      editor.chain().focus().setImage({ src: data.publicUrl }).run()
+    }
+    setImgUploading(false)
+  }
 
   return (
     <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
+      {/* Hidden file input for inline image upload */}
+      <input ref={imgInputRef} type="file" accept="image/*" className="hidden"
+        onChange={e => { uploadInlineImage(e.target.files?.[0]); e.target.value = '' }} />
+
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-0.5 p-2 border-b border-slate-100 bg-slate-50/80">
         <ToolbarBtn onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive('bold')} title="Bold">
@@ -171,11 +186,11 @@ function RichEditor({ value, onChange }) {
         }} active={editor.isActive('link')} title="Add link">
           <span className="text-[11px]">Link</span>
         </ToolbarBtn>
-        <ToolbarBtn onClick={() => {
-          const url = window.prompt('Image URL:')
-          if (url) editor.chain().focus().setImage({ src: url }).run()
-        }} active={false} title="Insert image">
-          <span className="text-[11px]">Image</span>
+        {/* Real file upload for inline images */}
+        <ToolbarBtn onClick={() => imgInputRef.current?.click()} active={false} title="Upload image from device">
+          <span className={`text-[11px] flex items-center gap-1 ${imgUploading ? 'opacity-50' : ''}`}>
+            {imgUploading ? '⏳' : '📷'} Image
+          </span>
         </ToolbarBtn>
         <div className="w-px h-4 bg-slate-200 mx-1" />
         <ToolbarBtn onClick={() => editor.chain().focus().undo().run()} active={false} title="Undo">
@@ -265,7 +280,9 @@ function BlogEditor({ post, onBack, onSaved, showToast }) {
         <div className="grid grid-cols-2 gap-4">
           <Input label="Read Time (e.g. 5 min read)" value={form.read_time} onChange={v => upd('read_time', v)} />
           <div className="flex flex-col gap-1.5">
-            <label className="text-[0.68rem] font-bold uppercase tracking-widest text-slate-400">Cover Colour</label>
+            <label className="text-[0.68rem] font-bold uppercase tracking-widest text-slate-400">
+              Cover Colour <span className="normal-case text-slate-300">(fallback if no photo)</span>
+            </label>
             <select value={form.cover_tone} onChange={e => upd('cover_tone', e.target.value)}
               className="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white">
               {TONES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
@@ -273,6 +290,17 @@ function BlogEditor({ post, onBack, onSaved, showToast }) {
           </div>
         </div>
         <Textarea label="Excerpt / Summary (shown on blog listing)" value={form.excerpt} onChange={v => upd('excerpt', v)} rows={2} />
+
+        {/* Cover / thumbnail image */}
+        <div className="pt-2 border-t border-slate-100">
+          <ImageUpload
+            label="Cover / Thumbnail Photo (shown on blog cards and article header)"
+            hint="JPG, PNG or WebP · 16:9 recommended · max 10 MB"
+            aspect="aspect-video"
+            value={form.cover_image || ''}
+            onUpload={url => upd('cover_image', url)}
+          />
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">

@@ -20,7 +20,15 @@ const cardVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
 }
 
-function CoverGradient({ tone, number }) {
+function CoverGradient({ tone, number, image }) {
+  if (image) {
+    return (
+      <div className="relative aspect-[16/9] overflow-hidden bg-slate-100">
+        <img src={image} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+      </div>
+    )
+  }
   return (
     <div className={`relative aspect-[16/9] bg-gradient-to-br ${tone} overflow-hidden`}>
       <div aria-hidden="true" className="absolute inset-0 opacity-20"
@@ -41,7 +49,7 @@ function PostCard({ post, index }) {
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-ink/[0.06] shadow-card hover:shadow-soft transition-shadow duration-300"
     >
-      <CoverGradient tone={post.cover_tone || post.tone || 'from-brand-700 to-brand-400'} number={String(index + 1).padStart(2, '0')} />
+      <CoverGradient tone={post.cover_tone || 'from-brand-700 to-brand-400'} number={String(index + 1).padStart(2, '0')} image={post.cover_image} />
       <div className="flex flex-col flex-1 p-7">
         <div className="flex items-center gap-3 text-xs uppercase tracking-wider text-ink/50 mb-3">
           <span className="text-brand-700 font-semibold">{post.category}</span>
@@ -73,7 +81,7 @@ export default function BlogList() {
   useEffect(() => {
     supabase
       .from('blog_posts')
-      .select('slug, title, category, excerpt, cover_tone, read_time, published_at')
+      .select('slug, title, category, excerpt, cover_tone, cover_image, read_time, published_at')
       .eq('published', true)
       .order('published_at', { ascending: false })
       .then(({ data, error }) => {

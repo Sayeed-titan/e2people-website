@@ -10,7 +10,7 @@ import {
   Building2, Navigation, Rocket, Info, Settings2, Lightbulb,
   FolderOpen, Users, Handshake, BookOpen, Phone, LayoutTemplate,
   LogOut, Plus, Trash2, Save, Check, AlertCircle, ChevronRight,
-  Eye, EyeOff, Pencil, ArrowLeft, Clock, Tag, Type,
+  Eye, EyeOff, Pencil, ArrowLeft, Clock, Tag, Type, ExternalLink,
 } from 'lucide-react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -505,6 +505,11 @@ export default function Admin() {
         <div className="p-5 border-b border-white/10">
           <img src="/logo.png" alt="e2People" className="h-7 w-auto brightness-0 invert mb-3" />
           <span className="text-[0.6rem] text-white/30 uppercase tracking-widest font-semibold">Content Manager</span>
+          <a href="/" target="_blank" rel="noopener noreferrer"
+            className="mt-3 flex items-center gap-2 text-[0.72rem] text-white/40 hover:text-white/80 transition-colors group">
+            <ExternalLink size={11} />
+            <span>View live site</span>
+          </a>
         </div>
         <nav className="flex-1 py-3 px-2 space-y-0.5">
           {NAV_ITEMS.map(({ key, label, Icon }) => (

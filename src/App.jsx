@@ -22,6 +22,8 @@ import Contact from './components/Contact'
 import Footer from './components/Footer'
 import Legal from './pages/Legal'
 import Admin from './pages/Admin'
+import BlogList from './pages/BlogList'
+import BlogPost from './pages/BlogPost'
 
 function Home() {
   return (
@@ -50,6 +52,8 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/legal" element={<Legal />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/blog" element={<BlogList />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
       </Routes>
     </BrowserRouter>
   )

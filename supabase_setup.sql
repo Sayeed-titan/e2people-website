@@ -187,7 +187,7 @@ INSERT INTO public.site_content (section, data) VALUES
 }'::jsonb),
 
 ('contact', '{
-  "eyebrow": "Let'\''s talk",
+  "eyebrow": "Let''s talk",
   "title": "Get in\ntouch.",
   "subtext": "We would love to hear about your project. Whether you are ready to start a new digital solution or simply need advice, we are here to help. Reach out and let us start building your digital future.",
   "email": "info@e2people.com",

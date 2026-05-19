@@ -70,11 +70,31 @@ export default function Contact() {
       return
     }
     setStatus('loading')
-    window.setTimeout(() => {
-      setStatus('success')
-      setFormData(initialForm)
-      window.setTimeout(() => setStatus('idle'), 4000)
-    }, 1100)
+    fetch('https://formspree.io/f/mjgzgvdl', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        name:    formData.name.trim(),
+        email:   formData.email.trim(),
+        phone:   formData.phone.trim() || '(not provided)',
+        message: formData.message.trim(),
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          setStatus('success')
+          setFormData(initialForm)
+          window.setTimeout(() => setStatus('idle'), 5000)
+        } else {
+          return res.json().then((data) => {
+            throw new Error(data?.error || 'Submission failed.')
+          })
+        }
+      })
+      .catch((err) => {
+        setStatus('error')
+        setErrorText(err.message || 'Something went wrong. Please try again.')
+      })
   }
 
   return (

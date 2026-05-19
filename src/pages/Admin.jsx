@@ -12,6 +12,7 @@ import {
   FolderOpen, Users, Handshake, BookOpen, Phone, LayoutTemplate,
   LogOut, Plus, Trash2, Save, Check, AlertCircle, ChevronRight,
   Eye, EyeOff, Pencil, ArrowLeft, Clock, Tag, Type, ExternalLink,
+  UserCog, KeyRound, Mail,
 } from 'lucide-react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -460,6 +461,142 @@ function Login() {
   )
 }
 
+/* ─── ACCOUNT SETTINGS ──────────────────────────────────────── */
+function AccountSettings() {
+  const [user, setUser] = useState(null)
+  const [newEmail, setNewEmail]       = useState('')
+  const [newPass,  setNewPass]        = useState('')
+  const [confirmPass, setConfirmPass] = useState('')
+  const [showPass, setShowPass]       = useState(false)
+  const [emailStatus, setEmailStatus] = useState(null)   // { ok, msg }
+  const [passStatus,  setPassStatus]  = useState(null)
+  const [emailSaving, setEmailSaving] = useState(false)
+  const [passSaving,  setPassSaving]  = useState(false)
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data?.user ?? null))
+  }, [])
+
+  async function handleEmailUpdate(e) {
+    e.preventDefault()
+    if (!newEmail.trim()) return setEmailStatus({ ok: false, msg: 'Please enter a new email address.' })
+    setEmailSaving(true); setEmailStatus(null)
+    const { error } = await supabase.auth.updateUser({ email: newEmail.trim() })
+    setEmailSaving(false)
+    if (error) {
+      setEmailStatus({ ok: false, msg: error.message })
+    } else {
+      setEmailStatus({ ok: true, msg: 'Confirmation link sent to your new email. Click it to complete the change.' })
+      setNewEmail('')
+    }
+  }
+
+  async function handlePassUpdate(e) {
+    e.preventDefault()
+    if (newPass.length < 8) return setPassStatus({ ok: false, msg: 'Password must be at least 8 characters.' })
+    if (newPass !== confirmPass) return setPassStatus({ ok: false, msg: 'Passwords do not match.' })
+    setPassSaving(true); setPassStatus(null)
+    const { error } = await supabase.auth.updateUser({ password: newPass })
+    setPassSaving(false)
+    if (error) {
+      setPassStatus({ ok: false, msg: error.message })
+    } else {
+      setPassStatus({ ok: true, msg: 'Password updated successfully.' })
+      setNewPass(''); setConfirmPass('')
+    }
+  }
+
+  const StatusBanner = ({ status }) => status ? (
+    <div className={`flex items-start gap-2 rounded-xl px-4 py-3 text-sm ${status.ok ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+      {status.ok ? <Check size={15} className="mt-0.5 shrink-0" /> : <AlertCircle size={15} className="mt-0.5 shrink-0" />}
+      <span>{status.msg}</span>
+    </div>
+  ) : null
+
+  return (
+    <div className="space-y-6 max-w-lg">
+      <div>
+        <h1 className="text-xl font-bold text-slate-800">My Account</h1>
+        <p className="text-sm text-slate-500 mt-1">Update your admin login credentials below.</p>
+        {user && (
+          <div className="mt-3 inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 text-indigo-700 px-3 py-1.5 rounded-full text-xs font-medium">
+            <Mail size={12} /> Signed in as <strong>{user.email}</strong>
+          </div>
+        )}
+      </div>
+
+      {/* Change Email */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/80 flex items-center gap-2">
+          <Mail size={15} className="text-indigo-500" />
+          <h2 className="font-semibold text-slate-700 text-sm">Change Email Address</h2>
+        </div>
+        <form onSubmit={handleEmailUpdate} className="p-6 space-y-4">
+          <Input
+            label="New Email Address"
+            type="email"
+            value={newEmail}
+            onChange={setNewEmail}
+          />
+          <StatusBanner status={emailStatus} />
+          <button type="submit" disabled={emailSaving}
+            className="flex items-center gap-2 px-5 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-full hover:bg-indigo-700 disabled:opacity-50 transition-colors">
+            {emailSaving
+              ? <><span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />Sending…</>
+              : <><Mail size={13} />Send Confirmation</>
+            }
+          </button>
+          <p className="text-xs text-slate-400">A confirmation link will be sent to the new address. The change takes effect after you click the link.</p>
+        </form>
+      </div>
+
+      {/* Change Password */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/80 flex items-center gap-2">
+          <KeyRound size={15} className="text-indigo-500" />
+          <h2 className="font-semibold text-slate-700 text-sm">Change Password</h2>
+        </div>
+        <form onSubmit={handlePassUpdate} className="p-6 space-y-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[0.68rem] font-bold uppercase tracking-widest text-slate-400">New Password</label>
+            <div className="relative">
+              <input
+                type={showPass ? 'text' : 'password'}
+                value={newPass}
+                onChange={e => setNewPass(e.target.value)}
+                placeholder="Min. 8 characters"
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 pr-10 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+              />
+              <button type="button" onClick={() => setShowPass(v => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[0.68rem] font-bold uppercase tracking-widest text-slate-400">Confirm New Password</label>
+            <input
+              type={showPass ? 'text' : 'password'}
+              value={confirmPass}
+              onChange={e => setConfirmPass(e.target.value)}
+              placeholder="Repeat password"
+              className="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+            />
+          </div>
+          <StatusBanner status={passStatus} />
+          <button type="submit" disabled={passSaving}
+            className="flex items-center gap-2 px-5 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-full hover:bg-indigo-700 disabled:opacity-50 transition-colors">
+            {passSaving
+              ? <><span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />Updating…</>
+              : <><KeyRound size={13} />Update Password</>
+            }
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 /* ─── SIDEBAR NAV ───────────────────────────────────────────── */
 const NAV_ITEMS = [
   { key: 'brand',     label: 'Brand',       Icon: Building2      },
@@ -474,6 +611,7 @@ const NAV_ITEMS = [
   { key: 'blog',      label: 'Blog Posts',  Icon: BookOpen       },
   { key: 'contact',   label: 'Contact',     Icon: Phone          },
   { key: 'footer',    label: 'Footer',      Icon: LayoutTemplate },
+  { key: 'account',   label: 'My Account',  Icon: UserCog        },
 ]
 
 /* ─── MAIN ──────────────────────────────────────────────────── */
@@ -774,6 +912,11 @@ export default function Admin() {
                 ))}
               </ArrayCard>
             </div>
+          )}
+
+          {/* ACCOUNT SETTINGS */}
+          {activeSection === 'account' && (
+            <AccountSettings />
           )}
 
         </div>

@@ -91,8 +91,8 @@ export default function About() {
             variants={fadeRight}
             className="lg:col-span-5 lg:sticky lg:top-24 self-start"
           >
-            <div className="relative rounded-3xl bg-ink text-white p-8 sm:p-10 overflow-hidden shadow-soft">
-              <div aria-hidden="true" className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-brand-700/40 blur-3xl" />
+            <div className="relative rounded-3xl bg-ink text-white p-8 sm:p-10 shadow-soft">
+              <div aria-hidden="true" className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-brand-700/40 blur-3xl pointer-events-none" />
 
               <div className="relative">
                 <div className="text-eyebrow uppercase text-white/55 mb-4 font-semibold">

@@ -66,7 +66,7 @@ export default function Footer() {
             <img
               src="/logo.png"
               alt={brand.full}
-              className="h-12 w-auto brightness-0 invert"
+              className="h-20 w-auto brightness-0 invert"
             />
             <p className="mt-6 text-white/70 leading-relaxed text-sm max-w-sm font-light">
               {footer.tagline}

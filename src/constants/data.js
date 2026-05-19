@@ -56,8 +56,8 @@ export const hero = {
 export const services = [
   { title: 'Website Design & Development', icon: 'web',        featured: true,
     description: 'Powerful, user-friendly websites that enhance your online presence and engage your audience.' },
-  { title: 'Mobile App Development',       icon: 'mobile',     featured: true,
-    description: 'Custom mobile apps that deliver seamless experiences, drive engagement, and support business growth.' },
+  { title: 'Android and iOS App Development', icon: 'mobile',   featured: true,
+    description: 'Custom Android & iOS apps that deliver seamless experiences, drive engagement, and support business growth.' },
   { title: 'Creative Design',              icon: 'palette',
     description: 'Creative, visually appealing graphics that resonate with your brand and communicate clearly.' },
   { title: 'Enterprise Software (ERP)',    icon: 'enterprise',
@@ -68,14 +68,8 @@ export const services = [
     description: 'Safely move business data to modern systems with no loss and minimal downtime.' },
   { title: 'Platform Management Systems',  icon: 'platform',
     description: 'Robust management systems that keep your digital infrastructure running smoothly.' },
-  { title: 'Video & Animation',            icon: 'video',
-    description: 'Compelling video and animation that captivates audiences and drives action.' },
-  { title: 'Motion Graphics',              icon: 'motion',
-    description: 'Dynamic motion graphics that bring your brand to life in striking, visual ways.' },
   { title: 'Social Media Management',      icon: 'social',
     description: 'Expert strategies that grow engagement and build lasting brand loyalty.' },
-  { title: 'Desktop Applications',         icon: 'desktop',
-    description: 'Reliable, offline-capable desktop apps tailored to your business needs.' },
   { title: 'APIs & Integrations',          icon: 'api',
     description: 'Custom APIs that connect systems and unify your business workflows.' },
   { title: 'Database Design & Management', icon: 'database',
@@ -137,6 +131,12 @@ export const solutions = {
       description:
         'Connect existing systems and applications into a unified ecosystem — improving efficiency and streamlining workflows.',
     },
+    {
+      number: '06',
+      title: 'AI Solutions',
+      description:
+        'Leverage the power of artificial intelligence — from intelligent automation and predictive analytics to NLP-driven tools — to help your business make smarter decisions and stay ahead of the competition.',
+    },
   ],
   stats: [
     { value: '13',  label: 'Service capabilities' },
@@ -186,11 +186,11 @@ export const portfolio = {
 }
 
 export const partners = [
-  { name: 'Cypheme',                    logo: '/partners/cypheme.webp' },
-  { name: 'Bondstein',                  logo: '/partners/bondstein_black_logo.png' },
-  { name: 'Spellbound Communications',  logo: '/partners/spellbound communications ltd.png' },
-  { name: 'The Earth',                  logo: '/partners/the earth.png' },
-  { name: 'Singularity',                logo: '/partners/singularity.png' },
+  { name: 'Cypheme',                    logo: '/partners/cypheme.webp',                             href: 'https://www.cypheme.com' },
+  { name: 'Bondstein',                  logo: '/partners/bondstein_black_logo.png',                 href: 'https://bondstein.com/' },
+  { name: 'Spellbound Communications',  logo: '/partners/spellbound communications ltd.png',        href: 'https://spellboundbd.com/' },
+  { name: 'The Earth',                  logo: '/partners/the earth.png',                            href: 'https://theearthbd.org/' },
+  { name: 'Singularity',                logo: '/partners/singularity.png',                          href: 'https://singularitybd.com/' },
 ]
 
 export const team = [
@@ -276,7 +276,7 @@ export const footer = {
   ],
   serviceLinks: [
     { label: 'Web Design & Development', to: 'services' },
-    { label: 'Mobile App Development',   to: 'services' },
+    { label: 'Android and iOS App Development', to: 'services' },
     { label: 'Enterprise Software (ERP)', to: 'services' },
     { label: 'CRM Solutions',             to: 'services' },
     { label: 'APIs & Integrations',       to: 'services' },

@@ -48,12 +48,14 @@ export default function Partners() {
               variants={itemVariants}
               className="flex items-center justify-center px-6 py-10 sm:py-12"
             >
-              <img
-                src={p.logo}
-                alt={`${p.name} logo`}
-                loading="lazy"
-                className="max-w-full max-h-12 sm:max-h-14 object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition duration-500"
-              />
+              <a href={p.href} target="_blank" rel="noopener noreferrer" aria-label={p.name} className="flex items-center justify-center">
+                <img
+                  src={p.logo}
+                  alt={`${p.name} logo`}
+                  loading="lazy"
+                  className="max-w-full max-h-12 sm:max-h-14 object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition duration-500"
+                />
+              </a>
             </motion.li>
           ))}
         </motion.ul>

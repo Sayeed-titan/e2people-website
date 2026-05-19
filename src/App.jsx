@@ -21,6 +21,7 @@ import Blog from './components/Blog'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import Legal from './pages/Legal'
+import ScrollToTop from './components/ScrollToTop'
 import Admin from './pages/Admin'
 import BlogList from './pages/BlogList'
 import BlogPost from './pages/BlogPost'
@@ -48,6 +49,7 @@ function Home() {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/legal" element={<Legal />} />

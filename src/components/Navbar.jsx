@@ -62,7 +62,7 @@ export default function Navbar() {
             className="cursor-pointer flex items-center gap-3"
             aria-label="Go to homepage"
           >
-            <img src="/logo.png" alt="e2People" className="h-[2.5rem] sm:h-[3.5rem] w-auto" />
+            <img src="/logo.png" alt="e2People" className="h-[2rem] sm:h-[3rem] w-auto" />
           </RouterLink>
 
           {/* Desktop links */}

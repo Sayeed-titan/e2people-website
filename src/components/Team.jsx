@@ -23,7 +23,7 @@ const cardVariants = {
 
 export default function Team() {
   return (
-    <section id="team" className="relative py-24 md:py-32 bg-canvas scroll-mt-16">
+    <section id="team" className="relative pt-4 pb-24 md:pt-6 md:pb-32 bg-canvas scroll-mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, x: -24 }}

@@ -1,9 +1,10 @@
 /*
  * COMPONENT: Footer
- * WHAT IT DOES: Refined dark footer. Brand block (logo + tagline + socials)
- *               at left, three link columns (Quick Links, Services, Legal),
- *               plus a Get In Touch column. Bottom bar with copyright and
- *               "Made with care by e2People."
+ * WHAT IT DOES: Refined dark footer with:
+ *   • Giant "e" watermark peeking above the footer edge
+ *   • Brand block (logo + tagline + socials + Google Map)
+ *   • Three link columns (Quick Links, Services, Get In Touch + Legal)
+ *   • Bottom bar with copyright and "Made with care by e2People."
  * HOW TO TWEAK:
  *  • Link lists / social URLs: edit `footer` in src/constants/data.js
  *  • Tagline / "Made with care": edit `footer.tagline` and `footer.madeWith`
@@ -42,7 +43,27 @@ export default function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="relative bg-ink text-white">
+    <footer className="relative bg-ink text-white overflow-hidden">
+      {/* ── "e" watermark peaking above footer ── */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none select-none absolute left-1/2 -translate-x-1/2 z-0"
+        style={{ top: '-72px', width: '180px', height: '144px', overflow: 'hidden' }}
+      >
+        <img
+          src="/logo.png"
+          alt=""
+          style={{
+            height: '180px',
+            width: 'auto',
+            filter: 'brightness(0) invert(1)',
+            opacity: 0.07,
+            userSelect: 'none',
+          }}
+        />
+      </div>
+
+      {/* Dot-grid texture */}
       <div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none opacity-[0.07]"
@@ -51,28 +72,29 @@ export default function Footer() {
           backgroundSize: '40px 40px',
         }}
       />
-      <div aria-hidden="true" className="absolute -top-32 left-1/2 -translate-x-1/2 w-[520px] h-[520px] rounded-full bg-brand-700/15 blur-[140px]" />
+      {/* Glow blob */}
+      <div aria-hidden="true" className="absolute -top-32 left-1/2 -translate-x-1/2 w-[520px] h-[520px] rounded-full bg-brand-700/15 blur-[140px] pointer-events-none" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="py-20 grid gap-12 lg:gap-16 lg:grid-cols-12"
+          className="py-20 grid gap-12 lg:gap-10 lg:grid-cols-12"
         >
-          {/* Brand block */}
-          <div className="lg:col-span-4">
+          {/* Brand block + Map */}
+          <div className="lg:col-span-4 flex flex-col gap-6">
             <img
               src="/logo.png"
               alt={brand.full}
-              className="h-20 w-auto brightness-0 invert"
+              className="h-24 w-auto brightness-0 invert"
             />
-            <p className="mt-6 text-white/70 leading-relaxed text-sm max-w-sm font-light">
+            <p className="text-white/70 leading-relaxed text-sm max-w-sm font-light">
               {footer.tagline}
             </p>
 
-            <div className="mt-7 flex items-center gap-3">
+            <div className="flex items-center gap-3">
               {footer.socialLinks.map((s) => {
                 const Icon = Icons[s.icon]
                 return (
@@ -89,6 +111,23 @@ export default function Footer() {
                 )
               })}
             </div>
+
+            {/* Google Map embed */}
+            <div className="rounded-2xl overflow-hidden border border-white/10 shadow-lg">
+              <iframe
+                title="e2People Office Location"
+                src="https://maps.google.com/maps?q=Baridhara+DOHS+Road+1+Dhaka+Bangladesh&output=embed&z=16"
+                width="100%"
+                height="200"
+                style={{ border: 0, display: 'block' }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+            <p className="text-white/45 text-xs leading-relaxed">
+              {contact.address}
+            </p>
           </div>
 
           {/* Quick Links */}
@@ -153,9 +192,6 @@ export default function Footer() {
                 <li key={`legal-${l.label}`}>
                   <a
                     href={l.href}
-                    onClick={(e) => {
-                      if (l.href === '#') e.preventDefault()
-                    }}
                     className="text-sm text-white/60 hover:text-white transition-colors"
                   >
                     {l.label}

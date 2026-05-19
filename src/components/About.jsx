@@ -30,7 +30,7 @@ const fadeRight = {
 
 export default function About() {
   return (
-    <section id="about" className="relative py-24 md:py-32 bg-canvas scroll-mt-20 overflow-hidden">
+    <section id="about" className="relative pt-24 pb-10 md:pt-32 md:pb-12 bg-canvas scroll-mt-20 overflow-hidden">
       <div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none bg-dot-grid opacity-60 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_70%)]"
@@ -107,7 +107,7 @@ export default function About() {
                   whileInView="visible"
                   viewport={{ once: true }}
                   variants={{ visible: { transition: { staggerChildren: 0.08, delayChildren: 0.2 } } }}
-                  className="mt-10 divide-y divide-white/10 border-y border-white/10"
+                  className="mt-10 space-y-1"
                 >
                   {about.values.map((v) => (
                     <motion.li key={v.title} variants={fadeUp}>

@@ -282,9 +282,9 @@ export const footer = {
     { label: 'APIs & Integrations',       to: 'services' },
   ],
   legalLinks: [
-    { label: 'Privacy Policy',     href: '#' },
-    { label: 'Terms & Conditions', href: '#' },
-    { label: 'Cookie Policy',      href: '#' },
+    { label: 'Privacy Policy',     href: '/legal#privacy' },
+    { label: 'Terms & Conditions', href: '/legal#terms' },
+    { label: 'Cookie Policy',      href: '/legal#cookies' },
   ],
   socialLinks: [
     { label: 'Facebook',  href: '#', icon: 'facebook' },

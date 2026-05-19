@@ -1,12 +1,14 @@
 /*
  * COMPONENT: App
- * WHAT IT DOES: Composes the page in the intended order:
- *   Hero → Services → About → Team → Solutions (dark) → Portfolio →
+ * WHAT IT DOES: Routes between the main landing page and the Legal page.
+ *   Landing page order:
+ *   Hero → Services → About → Team → Solutions → Portfolio →
  *   Partners → Blog → Contact → Footer
  * HOW TO TWEAK:
- *  • Reorder sections by moving the JSX lines below
+ *  • Reorder sections by moving the JSX lines in the Home route
  *  • All section content lives in src/constants/data.js
  */
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Services from './components/Services'
@@ -18,8 +20,9 @@ import Partners from './components/Partners'
 import Blog from './components/Blog'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import Legal from './pages/Legal'
 
-export default function App() {
+function Home() {
   return (
     <div className="w-full overflow-x-hidden bg-canvas text-ink">
       <Navbar />
@@ -36,5 +39,16 @@ export default function App() {
       </main>
       <Footer />
     </div>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/legal" element={<Legal />} />
+      </Routes>
+    </BrowserRouter>
   )
 }

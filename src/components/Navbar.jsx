@@ -47,7 +47,7 @@ export default function Navbar() {
             className="cursor-pointer flex items-center gap-3"
             aria-label="Go to top"
           >
-            <img src="/logo.png" alt="e2People" className="h-14 sm:h-16 w-auto" />
+            <img src="/logo.png" alt="e2People" className="h-[3.5rem] sm:h-[4rem] w-auto" />
           </Link>
 
           {/* Desktop links */}

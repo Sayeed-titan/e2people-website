@@ -251,6 +251,12 @@ export const blog = {
   cta: { label: 'Read Our Blog', to: 'contact' },
 }
 
+export const media = {
+  eyebrow: 'Our Media',
+  title: 'Gallery & Videos',
+  intro: 'A glimpse into our work, events, and milestones.',
+}
+
 export const contact = {
   eyebrow: "Let's talk",
   title: "Get in\ntouch.",
@@ -272,6 +278,7 @@ export const footer = {
     { label: 'Solutions',  to: 'solutions' },
     { label: 'Portfolio',  to: 'portfolio' },
     { label: 'Blog',       to: 'blog' },
+    { label: 'Media',      href: '/media' },
     { label: 'Contact Us', to: 'contact' },
   ],
   serviceLinks: [

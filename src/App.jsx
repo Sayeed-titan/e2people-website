@@ -25,6 +25,7 @@ import ScrollToTop from './components/ScrollToTop'
 import Admin from './pages/Admin'
 import BlogList from './pages/BlogList'
 import BlogPost from './pages/BlogPost'
+import Media from './pages/Media'
 
 function Home() {
   return (
@@ -56,6 +57,7 @@ export default function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/blog" element={<BlogList />} />
         <Route path="/blog/:slug" element={<BlogPost />} />
+        <Route path="/media" element={<Media />} />
       </Routes>
     </BrowserRouter>
   )

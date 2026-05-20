@@ -12,7 +12,7 @@ import {
   FolderOpen, Users, Handshake, BookOpen, Phone, LayoutTemplate,
   LogOut, Plus, Trash2, Save, Check, AlertCircle, ChevronRight,
   Eye, EyeOff, Pencil, ArrowLeft, Clock, Tag, Type, ExternalLink,
-  UserCog, KeyRound, Mail,
+  UserCog, KeyRound, Mail, Image as ImageIcon, Video, ToggleLeft, ToggleRight,
 } from 'lucide-react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
@@ -461,6 +461,192 @@ function Login() {
   )
 }
 
+/* ─── MEDIA MANAGER ─────────────────────────────────────────── */
+function MediaManager() {
+  const [header,   setHeader]   = useState({ eyebrow: 'Our Media', title: 'Gallery & Videos', intro: 'A glimpse into our work, events, and milestones.' })
+  const [photos,   setPhotos]   = useState([])
+  const [videos,   setVideos]   = useState([])
+  const [saving,   setSaving]   = useState({})
+  const [toast,    setToast2]   = useState(null)
+  const [loading,  setLoading]  = useState(true)
+
+  function showMsg(msg) { setToast2(msg); setTimeout(() => setToast2(null), 3000) }
+
+  // Load existing media
+  useEffect(() => {
+    async function load() {
+      const { data: sc } = await supabase.from('site_content').select('data').eq('section','media').single()
+      if (sc?.data) setHeader(sc.data)
+
+      const { data: items } = await supabase
+        .from('media_items').select('*')
+        .order('position', { ascending: true }).order('created_at', { ascending: false })
+      if (items) {
+        setPhotos(items.filter(i => i.type === 'photo'))
+        setVideos(items.filter(i => i.type === 'video'))
+      }
+      setLoading(false)
+    }
+    load()
+  }, [])
+
+  // Save header
+  async function saveHeader() {
+    setSaving(s => ({ ...s, header: true }))
+    await supabase.from('site_content').upsert({ section: 'media', data: header }, { onConflict: 'section' })
+    setSaving(s => ({ ...s, header: false }))
+    showMsg('✓ Header saved')
+  }
+
+  // Add photo
+  function addPhoto() {
+    setPhotos(p => [...p, { id: `new-${Date.now()}`, type:'photo', url:'', title:'', caption:'', position: p.length, published: true, _new: true }])
+  }
+
+  // Add video
+  function addVideo() {
+    setVideos(v => [...v, { id: `new-${Date.now()}`, type:'video', url:'', title:'', caption:'', thumbnail_url:'', position: v.length, published: true, _new: true }])
+  }
+
+  // Save a single media item
+  async function saveItem(item, list, setList) {
+    setSaving(s => ({ ...s, [item.id]: true }))
+    const { _new, ...data } = item
+    if (_new) {
+      const { data: inserted } = await supabase.from('media_items').insert([data]).select().single()
+      if (inserted) setList(l => l.map(i => i.id === item.id ? inserted : i))
+    } else {
+      await supabase.from('media_items').update(data).eq('id', item.id)
+    }
+    setSaving(s => ({ ...s, [item.id]: false }))
+    showMsg('✓ Saved')
+  }
+
+  // Delete a media item
+  async function deleteItem(item, setList) {
+    if (!item._new) await supabase.from('media_items').delete().eq('id', item.id)
+    setList(l => l.filter(i => i.id !== item.id))
+    showMsg('✓ Deleted')
+  }
+
+  function updatePhoto(id, field, value) {
+    setPhotos(p => p.map(i => i.id === id ? { ...i, [field]: value } : i))
+  }
+  function updateVideo(id, field, value) {
+    setVideos(v => v.map(i => i.id === id ? { ...i, [field]: value } : i))
+  }
+
+  const ToggleBtn = ({ checked, onChange }) => (
+    <button onClick={() => onChange(!checked)} className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full transition-colors ${checked ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
+      {checked ? <ToggleRight size={14}/> : <ToggleLeft size={14}/>}
+      {checked ? 'Published' : 'Hidden'}
+    </button>
+  )
+
+  if (loading) return <div className="text-slate-500 text-sm">Loading media…</div>
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-xl font-bold text-slate-800">Media</h1>
+        <p className="text-sm text-slate-500 mt-1">Manage your photo gallery and videos.</p>
+      </div>
+
+      {/* Header */}
+      <SectionCard title="Page Header" onSave={saveHeader} saving={saving.header}>
+        <Input label="Eyebrow text" value={header.eyebrow} onChange={v => setHeader(h => ({...h, eyebrow:v}))} />
+        <Input label="Page title" value={header.title} onChange={v => setHeader(h => ({...h, title:v}))} />
+        <Textarea label="Intro text" value={header.intro} onChange={v => setHeader(h => ({...h, intro:v}))} rows={2} />
+      </SectionCard>
+
+      {/* Photos */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <ImageIcon size={15} className="text-indigo-500" />
+            <h2 className="font-semibold text-slate-700 text-sm">Photos</h2>
+          </div>
+          <button onClick={addPhoto} className="flex items-center gap-1 px-3 py-1.5 bg-emerald-500 text-white text-xs font-semibold rounded-full hover:bg-emerald-600 transition-colors"><Plus size={12}/>Add Photo</button>
+        </div>
+        <div className="p-6 space-y-5">
+          {photos.length === 0 && <p className="text-sm text-slate-400 text-center py-4">No photos yet. Click Add Photo to upload one.</p>}
+          {photos.map((photo) => (
+            <div key={photo.id} className="border border-slate-200 rounded-xl p-4 space-y-3 bg-slate-50/50">
+              <div className="flex items-center justify-between">
+                <ToggleBtn checked={photo.published} onChange={v => updatePhoto(photo.id,'published',v)} />
+                <div className="flex gap-2">
+                  <button onClick={() => saveItem(photo, photos, setPhotos)} disabled={saving[photo.id]}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-full hover:bg-indigo-700 disabled:opacity-50 transition-colors">
+                    {saving[photo.id] ? <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin"/> : <Save size={11}/>}Save
+                  </button>
+                  <button onClick={() => deleteItem(photo, setPhotos)} className="flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 text-xs font-semibold rounded-full hover:bg-red-100 transition-colors">
+                    <Trash2 size={11}/>Remove
+                  </button>
+                </div>
+              </div>
+              <ImageUpload
+                value={photo.url}
+                onUpload={url => updatePhoto(photo.id,'url',url)}
+                label="Photo"
+                hint="JPG, PNG or WebP — max 10 MB"
+              />
+              <Input label="Title (shown on slide)" value={photo.title} onChange={v => updatePhoto(photo.id,'title',v)} />
+              <Input label="Caption" value={photo.caption} onChange={v => updatePhoto(photo.id,'caption',v)} />
+              <Input label="Position (sort order)" type="number" value={String(photo.position)} onChange={v => updatePhoto(photo.id,'position',parseInt(v)||0)} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Videos */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Video size={15} className="text-indigo-500" />
+            <h2 className="font-semibold text-slate-700 text-sm">Videos</h2>
+          </div>
+          <button onClick={addVideo} className="flex items-center gap-1 px-3 py-1.5 bg-emerald-500 text-white text-xs font-semibold rounded-full hover:bg-emerald-600 transition-colors"><Plus size={12}/>Add Video</button>
+        </div>
+        <div className="p-6 space-y-5">
+          {videos.length === 0 && <p className="text-sm text-slate-400 text-center py-4">No videos yet. Click Add Video to add a YouTube, Vimeo, or direct video link.</p>}
+          {videos.map((video) => (
+            <div key={video.id} className="border border-slate-200 rounded-xl p-4 space-y-3 bg-slate-50/50">
+              <div className="flex items-center justify-between">
+                <ToggleBtn checked={video.published} onChange={v => updateVideo(video.id,'published',v)} />
+                <div className="flex gap-2">
+                  <button onClick={() => saveItem(video, videos, setVideos)} disabled={saving[video.id]}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-full hover:bg-indigo-700 disabled:opacity-50 transition-colors">
+                    {saving[video.id] ? <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin"/> : <Save size={11}/>}Save
+                  </button>
+                  <button onClick={() => deleteItem(video, setVideos)} className="flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 text-xs font-semibold rounded-full hover:bg-red-100 transition-colors">
+                    <Trash2 size={11}/>Remove
+                  </button>
+                </div>
+              </div>
+              <Input label="Video URL (YouTube / Vimeo / direct .mp4 link)" value={video.url} onChange={v => updateVideo(video.id,'url',v)} />
+              <Input label="Title" value={video.title} onChange={v => updateVideo(video.id,'title',v)} />
+              <Input label="Caption" value={video.caption} onChange={v => updateVideo(video.id,'caption',v)} />
+              <ImageUpload
+                value={video.thumbnail_url}
+                onUpload={url => updateVideo(video.id,'thumbnail_url',url)}
+                label="Thumbnail (optional)"
+                hint="Shows before video plays — JPG or PNG"
+              />
+              <Input label="Position (sort order)" type="number" value={String(video.position)} onChange={v => updateVideo(video.id,'position',parseInt(v)||0)} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {toast && (
+        <div className="fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3 rounded-2xl text-sm shadow-2xl z-50 flex items-center gap-2">
+          {toast}
+        </div>
+      )}
+    </div>
+  )
+}
+
 /* ─── ACCOUNT SETTINGS ──────────────────────────────────────── */
 function AccountSettings() {
   const [user, setUser] = useState(null)
@@ -611,6 +797,7 @@ const NAV_ITEMS = [
   { key: 'blog',      label: 'Blog Posts',  Icon: BookOpen       },
   { key: 'contact',   label: 'Contact',     Icon: Phone          },
   { key: 'footer',    label: 'Footer',      Icon: LayoutTemplate },
+  { key: 'media',     label: 'Media',       Icon: ImageIcon      },
   { key: 'account',   label: 'My Account',  Icon: UserCog        },
 ]
 
@@ -912,6 +1099,11 @@ export default function Admin() {
                 ))}
               </ArrayCard>
             </div>
+          )}
+
+          {/* MEDIA */}
+          {activeSection === 'media' && (
+            <MediaManager />
           )}
 
           {/* ACCOUNT SETTINGS */}

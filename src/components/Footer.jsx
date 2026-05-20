@@ -7,6 +7,7 @@
  */
 import { motion } from 'framer-motion'
 import { Link } from 'react-scroll'
+import { Link as RouterLink } from 'react-router-dom'
 import { footer, brand, contact, NAV_OFFSET } from '../constants/data'
 
 const Icons = {
@@ -97,16 +98,25 @@ export default function Footer() {
             <p className="text-[0.7rem] uppercase tracking-widest font-semibold text-white/40 mb-4">Quick Links</p>
             <ul className="space-y-2.5">
               {footer.quickLinks.map((l) => (
-                <li key={`quick-${l.to}`}>
-                  <Link
-                    to={l.to}
-                    smooth={true}
-                    duration={500}
-                    offset={NAV_OFFSET}
-                    className="text-sm text-white/65 hover:text-white cursor-pointer transition-colors"
-                  >
-                    {l.label}
-                  </Link>
+                <li key={`quick-${l.href || l.to}`}>
+                  {l.href ? (
+                    <RouterLink
+                      to={l.href}
+                      className="text-sm text-white/65 hover:text-white transition-colors"
+                    >
+                      {l.label}
+                    </RouterLink>
+                  ) : (
+                    <Link
+                      to={l.to}
+                      smooth={true}
+                      duration={500}
+                      offset={NAV_OFFSET}
+                      className="text-sm text-white/65 hover:text-white cursor-pointer transition-colors"
+                    >
+                      {l.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

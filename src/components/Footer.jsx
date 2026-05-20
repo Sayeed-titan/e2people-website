@@ -192,7 +192,7 @@ export default function Footer() {
           <div className="rounded-2xl overflow-hidden border border-white/10 shadow-xl">
             <iframe
               title="e2People Office Location"
-              src="https://maps.google.com/maps?q=Baridhara+DOHS+Road+1+Dhaka+Bangladesh&output=embed&z=16"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d229.0!2d90.4129598!3d23.8151387!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c70b96220c09%3A0x6109d86b2731e65!2sSpellbound+Communications+Limited!5e0!3m2!1sen!2sbd!4v1"
               width="100%"
               height="220"
               style={{ border: 0, display: 'block' }}

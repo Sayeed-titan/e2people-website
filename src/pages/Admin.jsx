@@ -510,16 +510,26 @@ function MediaManager() {
 
   // Save a single media item
   async function saveItem(item, list, setList) {
-    setSaving(s => ({ ...s, [item.id]: true }))
-    const { _new, ...data } = item
-    if (_new) {
-      const { data: inserted } = await supabase.from('media_items').insert([data]).select().single()
-      if (inserted) setList(l => l.map(i => i.id === item.id ? inserted : i))
+    const tempId = item.id
+    setSaving(s => ({ ...s, [tempId]: true }))
+    if (item._new) {
+      // Strip fake id and _new flag — let Supabase generate a real UUID
+      const { _new, id, ...insertData } = item
+      const { data: inserted, error } = await supabase
+        .from('media_items').insert([insertData]).select().single()
+      if (error) {
+        showMsg('✗ Error: ' + error.message)
+      } else if (inserted) {
+        setList(l => l.map(i => i.id === tempId ? inserted : i))
+        showMsg('✓ Saved')
+      }
     } else {
-      await supabase.from('media_items').update(data).eq('id', item.id)
+      const { _new, ...data } = item
+      const { error } = await supabase.from('media_items').update(data).eq('id', item.id)
+      if (error) showMsg('✗ Error: ' + error.message)
+      else showMsg('✓ Saved')
     }
-    setSaving(s => ({ ...s, [item.id]: false }))
-    showMsg('✓ Saved')
+    setSaving(s => ({ ...s, [tempId]: false }))
   }
 
   // Delete a media item

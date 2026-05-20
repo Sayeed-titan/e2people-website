@@ -1,0 +1,14 @@
+# e2People — Apache SPA routing fix
+# Hostinger uses Apache. This file tells it to serve index.html
+# for every URL so React Router can handle the route client-side.
+
+Options -MultiViews
+RewriteEngine On
+RewriteBase /
+
+# Serve existing files and folders directly (images, CSS, JS, etc.)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Everything else → index.html (React Router takes over)
+RewriteRule ^ index.html [QSA,L]

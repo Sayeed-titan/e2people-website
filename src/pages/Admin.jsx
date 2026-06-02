@@ -423,12 +423,78 @@ function BlogManager({ showToast }) {
   )
 }
 
+/* ─── PASSWORD RESET (handles recovery link from email) ─────── */
+function PasswordReset({ onDone }) {
+  const [newPass,     setNewPass]     = useState('')
+  const [confirmPass, setConfirmPass] = useState('')
+  const [showPass,    setShowPass]    = useState(false)
+  const [status,      setStatus]      = useState(null)
+  const [loading,     setLoading]     = useState(false)
+
+  const submit = async (e) => {
+    e.preventDefault()
+    if (newPass.length < 8) return setStatus({ ok: false, msg: 'Password must be at least 8 characters.' })
+    if (newPass !== confirmPass) return setStatus({ ok: false, msg: 'Passwords do not match.' })
+    setLoading(true); setStatus(null)
+    const { error } = await supabase.auth.updateUser({ password: newPass })
+    setLoading(false)
+    if (error) {
+      setStatus({ ok: false, msg: error.message })
+    } else {
+      setStatus({ ok: true, msg: 'Password updated! Redirecting to login…' })
+      await supabase.auth.signOut()
+      setTimeout(onDone, 2000)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-800 flex items-center justify-center p-4">
+      <div className="w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8">
+        <img src="/logo.png" alt="e2People" className="h-10 w-auto mx-auto mb-6" />
+        <h1 className="text-xl font-bold text-slate-900 text-center mb-1">Set New Password</h1>
+        <p className="text-xs text-slate-400 text-center mb-8">Enter your new password below.</p>
+        <form onSubmit={submit} className="space-y-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[0.68rem] font-bold uppercase tracking-widest text-slate-400">New Password</label>
+            <div className="relative">
+              <input type={showPass ? 'text' : 'password'} value={newPass} onChange={e => setNewPass(e.target.value)}
+                placeholder="Min. 8 characters"
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 pr-10 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white" />
+              <button type="button" onClick={() => setShowPass(v => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                {showPass ? <EyeOff size={15}/> : <Eye size={15}/>}
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[0.68rem] font-bold uppercase tracking-widest text-slate-400">Confirm Password</label>
+            <input type={showPass ? 'text' : 'password'} value={confirmPass} onChange={e => setConfirmPass(e.target.value)}
+              placeholder="Repeat password"
+              className="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white" />
+          </div>
+          {status && (
+            <div className={`flex items-center gap-2 text-xs rounded-lg px-3 py-2 ${status.ok ? 'text-emerald-700 bg-emerald-50' : 'text-red-600 bg-red-50'}`}>
+              {status.ok ? <Check size={14}/> : <AlertCircle size={14}/>}{status.msg}
+            </div>
+          )}
+          <button type="submit" disabled={loading}
+            className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 disabled:opacity-50 transition-colors text-sm">
+            {loading ? 'Updating…' : 'Set New Password'}
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 /* ─── LOGIN ─────────────────────────────────────────────────── */
 function Login() {
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
   const [error, setError]       = useState('')
   const [loading, setLoading]   = useState(false)
+  const [forgotMode, setForgotMode] = useState(false)
+  const [resetSent,  setResetSent]  = useState(false)
 
   const submit = async (e) => {
     e.preventDefault()
@@ -437,25 +503,75 @@ function Login() {
     if (error) { setError(error.message); setLoading(false) }
   }
 
+  const sendReset = async (e) => {
+    e.preventDefault()
+    if (!email.trim()) return setError('Please enter your email address.')
+    setLoading(true); setError('')
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: 'https://e2people.com/admin',
+    })
+    setLoading(false)
+    if (error) setError(error.message)
+    else setResetSent(true)
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-800 flex items-center justify-center p-4">
       <div className="w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8">
         <img src="/logo.png" alt="e2People" className="h-10 w-auto mx-auto mb-6" />
-        <h1 className="text-xl font-bold text-slate-900 text-center mb-1">Admin Panel</h1>
-        <p className="text-xs text-slate-400 text-center mb-8">e2People Limited · Content Management</p>
-        <form onSubmit={submit} className="space-y-4">
-          <Input label="Email" value={email} onChange={setEmail} type="email" />
-          <Input label="Password" value={password} onChange={setPassword} type="password" />
-          {error && (
-            <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2">
-              <AlertCircle size={14} />{error}
+        <h1 className="text-xl font-bold text-slate-900 text-center mb-1">
+          {forgotMode ? 'Reset Password' : 'Admin Panel'}
+        </h1>
+        <p className="text-xs text-slate-400 text-center mb-8">
+          {forgotMode ? "We'll send a reset link to your email." : 'e2People Limited · Content Management'}
+        </p>
+
+        {resetSent ? (
+          <div className="text-center space-y-4">
+            <div className="w-14 h-14 rounded-full bg-emerald-50 flex items-center justify-center mx-auto">
+              <Check size={28} className="text-emerald-600" />
             </div>
-          )}
-          <button type="submit" disabled={loading}
-            className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 disabled:opacity-50 transition-colors text-sm">
-            {loading ? 'Signing in…' : 'Sign In'}
-          </button>
-        </form>
+            <p className="text-sm text-slate-700 font-medium">Reset link sent!</p>
+            <p className="text-xs text-slate-400">Check your email and click the link. It will bring you back here to set a new password.</p>
+            <button onClick={() => { setForgotMode(false); setResetSent(false) }}
+              className="text-xs text-indigo-600 hover:underline">Back to Sign In</button>
+          </div>
+        ) : forgotMode ? (
+          <form onSubmit={sendReset} className="space-y-4">
+            <Input label="Your Email" value={email} onChange={setEmail} type="email" />
+            {error && (
+              <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2">
+                <AlertCircle size={14}/>{error}
+              </div>
+            )}
+            <button type="submit" disabled={loading}
+              className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 disabled:opacity-50 transition-colors text-sm">
+              {loading ? 'Sending…' : 'Send Reset Link'}
+            </button>
+            <button type="button" onClick={() => { setForgotMode(false); setError('') }}
+              className="w-full text-xs text-slate-400 hover:text-slate-600 transition-colors">
+              ← Back to Sign In
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={submit} className="space-y-4">
+            <Input label="Email" value={email} onChange={setEmail} type="email" />
+            <Input label="Password" value={password} onChange={setPassword} type="password" />
+            {error && (
+              <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2">
+                <AlertCircle size={14}/>{error}
+              </div>
+            )}
+            <button type="submit" disabled={loading}
+              className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 disabled:opacity-50 transition-colors text-sm">
+              {loading ? 'Signing in…' : 'Sign In'}
+            </button>
+            <button type="button" onClick={() => { setForgotMode(true); setError('') }}
+              className="w-full text-xs text-slate-400 hover:text-indigo-600 transition-colors">
+              Forgot password?
+            </button>
+          </form>
+        )}
       </div>
     </div>
   )
@@ -813,16 +929,28 @@ const NAV_ITEMS = [
 
 /* ─── MAIN ──────────────────────────────────────────────────── */
 export default function Admin() {
-  const [session,  setSession]  = useState(null)
-  const [checking, setChecking] = useState(true)
-  const [content,  setContent]  = useState(buildInitialContent())
-  const [toast,    setToast]    = useState('')
-  const [saving,   setSaving]   = useState({})
+  const [session,      setSession]      = useState(null)
+  const [checking,     setChecking]     = useState(true)
+  const [recoveryMode, setRecoveryMode] = useState(false)
+  const [content,      setContent]      = useState(buildInitialContent())
+  const [toast,        setToast]        = useState('')
+  const [saving,       setSaving]       = useState({})
   const [activeSection, setActiveSection] = useState('brand')
 
   useEffect(() => {
+    // Detect password recovery link (Supabase puts #access_token=...&type=recovery in URL)
+    const hash = window.location.hash
+    if (hash.includes('type=recovery')) {
+      setRecoveryMode(true)
+      setChecking(false)
+      return
+    }
     supabase.auth.getSession().then(({ data: { session } }) => { setSession(session); setChecking(false) })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => setSession(s))
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, s) => {
+      setSession(s)
+      // If auth event is PASSWORD_RECOVERY, show reset form
+      if (s?.user && window.location.hash.includes('type=recovery')) setRecoveryMode(true)
+    })
     return () => subscription.unsubscribe()
   }, [])
 
@@ -857,6 +985,7 @@ export default function Admin() {
   }, [])
 
   if (checking) return <div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-300 text-sm">Loading…</div>
+  if (recoveryMode) return <PasswordReset onDone={() => { setRecoveryMode(false); window.location.hash = '' }} />
   if (!session) return <Login />
 
   const c = content
